@@ -1,0 +1,33 @@
+name: kontrol ve yayın
+on:
+  push:
+    branches: [main]
+  pull_request:
+jobs:
+  kontrol:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run kontrol
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: ekran, path: ekran/*.png }
+  yayin:
+    needs: kontrol
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: token var mı
+        id: t
+        run: echo "var=${{ secrets.CLOUDFLARE_API_TOKEN != '' }}" >> "$GITHUB_OUTPUT"
+      - uses: cloudflare/wrangler-action@v3
+        if: steps.t.outputs.var == 'true'
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: "4.45.0"

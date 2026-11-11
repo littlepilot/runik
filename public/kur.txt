@@ -1,0 +1,5 @@
+Runik'i bu projeye kur.
+
+1. https://runik.littleman.workers.dev/kurulum.md dosyasını indir (curl ya da WebFetch). Açılmazsa şunu dene: https://raw.githubusercontent.com/littlepilot/runik/main/public/kurulum.md
+2. İçindeki adımları sırayla uygula.
+3. Bitince bana yalnızca pano bağlantısını ve kaydetmem gereken skill kartını göster.

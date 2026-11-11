@@ -1,0 +1,4 @@
+node_modules/
+ekran/
+.wrangler/
+__pycache__/

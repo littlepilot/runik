@@ -1,0 +1,16 @@
+{
+  "name": "runik",
+  "private": true,
+  "description": "Claude Code için görsel cevap dili: tanıtım sayfası, kurulum ve runik-cizim skill'i",
+  "scripts": {
+    "sayfa": "python3 scripts/cizimler.py && python3 scripts/sayfa.py",
+    "kontrol": "node scripts/kontrol.mjs",
+    "yerel": "wrangler dev",
+    "yayinla": "wrangler deploy"
+  },
+  "devDependencies": {
+    "html-validate": "8.24.1",
+    "playwright": "1.63.0",
+    "wrangler": "4.45.0"
+  }
+}

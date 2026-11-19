@@ -59,7 +59,7 @@ b.append(L(24,222,736,222))
 b.append(T(24,248,'Her yeni thread’de',14,600))
 b.append(R(24,272,132,92,'ink',2))
 b.append(T(40,300,'yeni thread',13,600)); b.append(T(40,318,'skill açılır',11.5)); b.append(T(40,336,'güncelini çeker',11.5,400,'muted'))
-src=[('bu site','skill/runik-cizim','birincil','odak','odak',False),('GitHub','main dalı','yedek','dikkat','dikkat',False),('skill içi kopya','son kurulum','son çare','edge',None,True)]
+src=[('GitHub','main dalı','birincil','odak','odak',False),('runik sitesi','workers.dev','yedek','dikkat','dikkat',False),('skill içi kopya','son kurulum','son çare','edge',None,True)]
 for k,(n,d,lab,c,fill,dash) in enumerate(src):
     yy=264+k*38
     b.append(f'<path d="M156 318 C 190 318, 196 {yy+16}, 226 {yy+16}" stroke="var(--{c})" stroke-width="{2 if k==0 else 1.5}" fill="none"{" stroke-dasharray=\"5 4\"" if k else ""}/>')

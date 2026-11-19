@@ -1,5 +1,6 @@
-Runik'i bu projeye kur.
+Runik'i bu projeye kur (Runik: cevapların uzun metin yerine kurallı çizimlerle yan ekrandaki bir panoda gösterilmesi).
 
-1. https://runik.littleman.workers.dev/kurulum.md dosyasını indir (curl ya da WebFetch). Açılmazsa şunu dene: https://raw.githubusercontent.com/littlepilot/runik/main/public/kurulum.md
-2. İçindeki adımları sırayla uygula.
-3. Bitince bana yalnızca pano bağlantısını ve kaydetmem gereken skill kartını göster.
+Kurulum adımları burada: https://raw.githubusercontent.com/littlepilot/runik/main/public/kurulum.md
+Açılmazsa: https://runik.littleman.workers.dev/kurulum.md
+
+Dosyayı curl ile indir, oku ve adımları sırayla uygula: pano artifact'ini kur, runik skill'ini öner, proje hafızasına runik.md yaz, panoya ilk kartı yaz. Bitince bana yalnızca pano bağlantısını göster.

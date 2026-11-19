@@ -116,7 +116,7 @@ async function ciz(kart, kap) {
         const d = el('div', 'cizim');
         parca.forEach(p => {
           const w = el('div');
-          w.innerHTML = window.DOMPurify ? DOMPurify.sanitize(String(p), { USE_PROFILES: { svg: true }, ADD_ATTR: ['font-size','font-weight','text-anchor','stroke-dasharray','fill-opacity','stroke-linecap','stroke-linejoin','role','aria-label'] }) : '';
+          w.innerHTML = window.DOMPurify ? DOMPurify.sanitize(String(p), { USE_PROFILES: { svg: true, svgFilters: true }, ADD_ATTR: ['font-size','font-weight','text-anchor','stroke-dasharray','fill-opacity','stroke-linecap','stroke-linejoin','role','aria-label'] }) : '';
           if (!w.innerHTML) w.textContent = 'Çizim gösterilemedi';
           d.append(w);
         });

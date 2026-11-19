@@ -11,16 +11,17 @@ Bu skill ince bir yükleyicidir. Çizim kuralları her thread'de en güncel hald
 
 ```bash
 mkdir -p /tmp/runik && cd /tmp/runik
-for u in "https://runik.littleman.workers.dev" "https://raw.githubusercontent.com/littlepilot/runik/main/public"; do
+for u in "https://raw.githubusercontent.com/littlepilot/runik/main/public" "https://runik.littleman.workers.dev"; do
   curl -fsSL "$u/skill/surum.json" -o surum.json \
   && curl -fsSL "$u/skill/runik-cizim/SKILL.md" -o SKILL.md \
   && curl -fsSL "$u/skill/runik-cizim/runik-lint.js" -o runik-lint.js \
   && curl -fsSL "$u/skill/runik-cizim/purify.min.js" -o purify.min.js \
+  && curl -fsSL "$u/skill/runik-cizim/runik_nesne.py" -o runik_nesne.py \
   && echo "kaynak: $u" && break
 done
 ```
 
-Sonra `/tmp/runik/SKILL.md` dosyasını baştan sona oku ve uygula; denetim betiği `/tmp/runik/runik-lint.js`. İki kaynak da açılmazsa bu dosyanın sonundaki "Yedek kopya"yı uygula ve kullanıcıya bir kez, tek satırla, ağ ayarlarında bu alan adlarına izin verilmesi gerektiğini söyle.
+Sonra `/tmp/runik/SKILL.md` dosyasını baştan sona oku ve uygula; denetim betiği `/tmp/runik/runik-lint.js`. Gerçek nesne çizimlerinde (devre kartı, dağ, kasa) yardımcı kütüphane `/tmp/runik/runik_nesne.py`. İki kaynak da açılmazsa bu dosyanın sonundaki "Yedek kopya"yı uygula ve kullanıcıya bir kez, tek satırla, ağ ayarlarında bu alan adlarına izin verilmesi gerektiğini söyle.
 
 ## 2. Cevabı panoya yaz
 
@@ -39,7 +40,7 @@ Cevapları, açıklamaları ve sonuçları panoya kart olarak yaz: ArtifactData 
   - kart: `{"ozet","durum":"ok|uyari|hata|bilgi","maddeler":[],"sayilar":{}}`
 - not: isteğe bağlı
 
-Renkler yalnız pano tokenlarıyla: `var(--ink)`, `var(--muted)`, `var(--edge)`, `var(--line)`, `var(--tamam)`, `var(--dikkat)`, `var(--risk)`, `var(--odak)`, `var(--k2)`, `var(--tint)`, `var(--surface)`.
+Renkler yalnız pano tokenlarıyla: `var(--ink)`, `var(--muted)`, `var(--edge)`, `var(--line)`, `var(--tamam)`, `var(--dikkat)`, `var(--risk)`, `var(--odak)`, `var(--k2)`, `var(--tint)`, `var(--surface)`. Gerçek nesnenin gövdesi bu kuralın dışındadır: doğal renginde, gölgeli çizilir (güncel kurallar §4b); anlam renkleri yalnız üstündeki işarettedir.
 
 Thread'e en fazla tek satır yaz: `→ panoda: <başlık>`. Kod, bağlantı ve dosya yolu gibi birebir gerekenler thread'de kalabilir. Karar gerekiyorsa karar kartını kullan.
 

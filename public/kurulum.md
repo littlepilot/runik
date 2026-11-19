@@ -2,15 +2,15 @@
 
 Bu dosyayı, kullanıcı Runik kurulum prompt'unu bir Claude Code projesine yapıştırdığı için okuyorsun. Runik, cevapların uzun metin yerine kurallı çizimlerle yan ekrandaki bir panoda gösterilmesidir. Aşağıdaki adımları sırayla uygula. Kullanıcıya ara rapor verme; sonda tek mesaj yeter.
 
-Kaynaklar (ilk açılan kullanılır):
-- SITE = https://runik.littleman.workers.dev
-- YEDEK = https://raw.githubusercontent.com/littlepilot/runik/main/public
+Kaynaklar (ilk açılan kullanılır; Claude Code bulut ortamlarında GitHub genelde açıktır):
+- ANA = https://raw.githubusercontent.com/littlepilot/runik/main/public
+- YEDEK = https://runik.littleman.workers.dev
 
 ## 1. Dosyaları indir
 
 ```bash
 mkdir -p /tmp/runik && cd /tmp/runik
-for u in "https://runik.littleman.workers.dev" "https://raw.githubusercontent.com/littlepilot/runik/main/public"; do
+for u in "https://raw.githubusercontent.com/littlepilot/runik/main/public" "https://runik.littleman.workers.dev"; do
   curl -fsSL "$u/skill/surum.json" -o surum.json \
   && curl -fsSL "$u/skill/runik/SKILL.md" -o yukleyici.md \
   && curl -fsSL "$u/skill/runik-cizim/SKILL.md" -o SKILL.md \
@@ -19,7 +19,7 @@ for u in "https://runik.littleman.workers.dev" "https://raw.githubusercontent.co
 done
 ```
 
-İkisi de açılmazsa WebFetch ile dene. O da olmazsa dur ve kullanıcıya tek satırla, ortamın ağ ayarlarında bu alan adlarına izin vermesi gerektiğini söyle.
+İkisi de açılmazsa WebFetch ile dene ve içeriği birebir döndürmesini iste (özet değil). O da olmazsa dur ve kullanıcıya tek satırla, ortamın ağ ayarlarında bu alan adlarına izin vermesi gerektiğini söyle.
 
 ## 2. Panoyu kur
 
@@ -64,7 +64,7 @@ metadata:
 ---
 Runik kurulu (sürüm <surum>, kurulum <bugünün tarihi>).
 Pano: <pano bağlantısı> (pano sürümü <surum.json'daki pano>)
-Her cevapta `runik` skill'ini uygula: önce güncel kuralları https://runik.littleman.workers.dev/skill/runik-cizim/SKILL.md'den çek, cevabı panoya kart olarak yaz, thread'e en fazla tek satır yaz.
+Her cevapta `runik` skill'ini uygula: önce güncel kuralları GitHub'dan (littlepilot/runik, public/skill/runik-cizim/SKILL.md) çek, cevabı panoya kart olarak yaz, thread'e en fazla tek satır yaz.
 ```
 
 ## 5. Panoya ilk kartı yaz

@@ -1,5 +1,6 @@
 // runik-lint: node runik-lint.js <kart.json | svgler.json> [purify.min.js]
 // Kart JSON'u (veri_json alanı) ya da düz SVG dizisi alır. İhlal varsa çıkış kodu 1.
+// Pano svg + svgFilters profiliyle temizler (nesne çizimlerindeki gölge ve doku filtreleri kalır).
 const { chromium } = require('playwright');
 const fs = require('fs');
 const path = require('path');
@@ -14,7 +15,7 @@ const ADD_ATTR = ['font-size', 'font-weight', 'text-anchor', 'stroke-dasharray',
   svgs.forEach((s, i) => {
     for (const m of s.matchAll(/var\(--([a-z0-9-]+)\)/g)) if (!TOKENS.includes(m[1])) problems.push(`#${i + 1}: tanımsız token --${m[1]}`);
     for (const m of s.matchAll(/\sid="([^"]+)"/g)) (ids[m[1]] = ids[m[1]] || []).push(i + 1);
-    if (/[a-z][A-Z][a-z]*=/.test(s.replace(/viewBox=/g, ''))) problems.push(`#${i + 1}: camelCase öznitelik (kebab-case olmalı)`);
+    if (/[a-z][A-Z][a-z]*=/.test(s.replace(/(viewBox|stdDeviation|baseFrequency|numOctaves|gradientUnits)=/g, ''))) problems.push(`#${i + 1}: camelCase öznitelik (kebab-case olmalı)`);
     if (/<marker|<use|<foreignObject|<animate|<set\b|\son[a-z]+=/.test(s)) problems.push(`#${i + 1}: DOMPurify'ın sileceği öğe`);
   });
   for (const [id, where] of Object.entries(ids)) if (where.length > 1) problems.push(`id "${id}" tekrar ediyor: çizim ${where.join(', ')}`);
@@ -25,7 +26,7 @@ const ADD_ATTR = ['font-size', 'font-weight', 'text-anchor', 'stroke-dasharray',
     const out = [];
     const count = s => { const d = document.createElement('div'); d.innerHTML = s; return d.querySelectorAll('*').length; };
     svgs.forEach((s, i) => {
-      const clean = DOMPurify.sanitize(s, { USE_PROFILES: { svg: true }, ADD_ATTR });
+      const clean = DOMPurify.sanitize(s, { USE_PROFILES: { svg: true, svgFilters: true }, ADD_ATTR });
       const lost = count(s) - count(clean);
       if (lost) out.push(`#${i + 1}: DOMPurify ${lost} öğe sildi`);
       const w = document.getElementById('w'); w.innerHTML = clean;

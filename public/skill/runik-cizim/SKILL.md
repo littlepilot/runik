@@ -1,11 +1,17 @@
 ---
 name: runik-cizim
-description: Oğuz'a bir şeyi görsel anlatırken (açıklama, kavram, mimari, süreç, karşılaştırma) SVG çizimlerini Runik çizim temasıyla üretir.
+description: Oğuz'a bir şeyi görsel anlatırken (açıklama, kavram, mimari, süreç, karşılaştırma) SVG çizimlerini Runik çizim temasıyla üretir; gerçek nesneleri (makine, dağ, kasa, bina) gölgeli ve doğal renkli çizer.
 ---
 
 # Runik çizim teması
 
 Felsefe: sessiz lüks. Görselle anlatılabilen metinle anlatılmaz; metin yalnızca görselin taşıyamadığı yerde ve kısa olur (bkz. §0, kesin kural). Her çizim, hiçbir şey bilmeyen birine anlatır gibi kurulur. Bu tema bir örnek koleksiyonu değil, kural setidir: her yeni çizim aşağıdaki tuval, yazı, renk, bileşen ve kalıp kurallarıyla sıfırdan çizilir.
+
+İki çizim türü var, ilk iş hangisi olduğuna karar vermektir:
+- **Kavram çizimi** (tanım, süreç, karşılaştırma, ölçü, mimari): düz, gölgesiz, renkler anlam taşır (§1–§6).
+- **Nesne çizimi** (gerçek, dokunulabilir şey: devre kartı, dağ, kasa, dizüstü, kemik): gölgeli ve doğal renkli, Visual Explainer tekniğiyle (§4b). Runik anlam renkleri nesnenin gövdesine girmez, yalnız üstüne konan işarette kalır.
+
+Bir çizimde ikisi bir arada olabilir: nesne doğal renkte çizilir, etiketler, oklar ve durum işaretleri Runik temasıyla üstüne konur.
 
 ## 0. Kesin kural: metin son çaredir
 
@@ -38,7 +44,7 @@ Metin bütçesi:
 
 ## 1. Tuval
 
-- El yapımı inline SVG. Mermaid görünümlü kutu-ok diyagramı, renksiz çok seviyeli hiyerarşi ağacı, emoji, gölge, gradyan, 3B yok. Anlam taşıyan oklu zincir (§5.5) serbesttir.
+- El yapımı inline SVG. Mermaid görünümlü kutu-ok diyagramı, renksiz çok seviyeli hiyerarşi ağacı, emoji yok. Kavram çiziminde gölge, gradyan ve 3B yok; nesne çiziminde bunlar zorunlu (§4b). Anlam taşıyan oklu zincir (§5.5) serbesttir.
 - `viewBox="0 0 760 H"`, H içeriğe göre (genelde 320–610). `width="100%"`.
 - Kenar boşluğu 24: içerik x=24 ile x=736 arasında.
 - Sütun ızgarası:
@@ -78,7 +84,7 @@ Kök `fontSize='13'`. Yalnızca şu boyutlar:
 
 ## 3. Renk
 
-Renkler süs değil, anlam taşır. Her çizim yalnızca şu rolleri kullanır:
+Renkler süs değil, anlam taşır. Bu bölüm kavram çizimleri ve nesnenin üstüne konan işaretler içindir; nesnenin gövdesi doğal renginde çizilir (§4b). Her kavram çizimi yalnızca şu rolleri kullanır:
 
 | Rol | Ne için | Runik açık | Runik koyu | Claude Docs token |
 |---|---|---|---|---|
@@ -122,8 +128,38 @@ Her çizim bu parçalardan kurulur. Ölçüler sabittir.
 - **Oklar**: küçük dolu üçgen uç (6×6). Nötr akış `edge 1.5`. Anlamlı akış 2–3 px, rengi anlamı taşır. Kesikli = dolaylı, sonra, kopya. Panel geçişi: ince `›` (quiet, 2 px).
 - **Kapsam sınırı**: bir şeyin içinde olmayı gösteren kesikli dış çerçeve (`6 4`, edge) ve sol üstte küçük BÜYÜK HARF etiket (İŞLEMCİ ÇİPİ).
 - **Mini kavram simgesi**: 24–32 px, ince ink çizgi, geometrik (belge, büyüteç, göz, yol, kilit, saat, onay/çarpı). Emoji asla. Bir kavramı etiketsiz taşıyabiliyorsa etiket yazılmaz; yazılırsa tek kelime.
-- **Nesne simgesi (harita, konum)**: gerçek bir nesneyi (dağ, bina, gemi) temsil eden işaret soyut geometri olamaz (üçgen, daire yetmez). Nesnenin tanınır silüeti çizilir: dağ için girintili sırt + ikincil tepe + kar örtüsü. Boyut bir değeri taşıyorsa silüetin alanı değerle orantılıdır (boy ∝ √değer, 0 tabanlı). En büyük değer en küçüğün 2 katından azsa boyut yerine 3 sınıf kullanılır ve sınıf eşikleri lejantta yazar. Birbirine binen simgeler kaydırılıp kılavuz çizgiyle bağlanır.
+- **Nesne simgesi (harita, konum)**: gerçek bir nesneyi (dağ, bina, gemi) temsil eden işaret soyut geometri olamaz (üçgen, daire yetmez). Nesnenin tanınır silüeti §4b tekniğiyle, doğal renkte çizilir: dağ için `N.peak()` (girintili sırt, ikincil tepe, gölgeli yüz, kar). Boyut bir değeri taşıyorsa silüetin alanı değerle orantılıdır (boy ∝ √değer, 0 tabanlı). En büyük değer en küçüğün 2 katından azsa boyut yerine 3 sınıf kullanılır ve sınıf eşikleri lejantta yazar. Birbirine binen simgeler kaydırılıp kılavuz çizgiyle bağlanır.
 - **Lejant**: satır içinde, en altta: 16×16 örnek + metin. Ayrı kutu yok.
+
+## 4b. Nesne çizimi (Visual Explainer tekniği)
+
+Gerçek bir nesne kutu-çubukla ya da düz renkli şekille çizilmez; tanınır, gölgeli bir resim olarak çizilir. Yardımcılar bu klasörde: `runik_nesne.py` (Visual Explainer'ın `vxart.py` tekniğinden uyarlandı, id'leri çizime özgü önekli).
+
+```python
+from runik_nesne import Nesne, pol, blob, smooth, rrect, capsule
+N = Nesne("k20261118-kart")                 # önek: çizime özgü
+N.add(N.slab(50, 90, 900, 700, N.PCB, r=18, depth=14))
+N.add(N.grain(rrect(50, 90, 900, 700, 18), 0.35))
+N.mark("cpu", 270, 222)                     # etiketlenecek nokta
+svg_defs, g = N.defs(), N.group(24, 52, 0.42)   # Runik 760 tuvaline yerleştir
+x, y = N.at("cpu")                          # etiket ve kılavuz çizgi buradan çıkar
+```
+
+Tam örnek: `ornek_nesne.py` (anakart + Runik etiketleri, gerçek dağ silüetli harita; panoda "Nesne çizimi: yeni tema örneği" kartı).
+
+Yapı taşları: `slab` (kart, çip, kasa, levha), `layers` (katman kesiti), `ball` (yuvarlak gövde), `tube` (boru, kablo, damar), `peak` (dağ), `laptop`, `chip`, `shadow`, `grain`; şekil için `blob` + `smooth` (organik), `rrect`, `capsule`; dolgu için `N.linear`, `N.radial`, `N.clip`.
+
+Kurallar:
+- **Renk doğal**: devre kartı yeşil, metal gri, dağ kahve ve kar beyazı, kağıt krem. Hazır paletler: `N.PCB, METAL, DARK, PAPER, ROCK, STONE, GOLD, WOOD, GLASS, SKIN, LEAF, WATER, SAND`. Her palet (açık, orta, koyu).
+- **Runik renkleri gövdeye girmez**: `var(--tamam/--dikkat/--risk/--odak)` nesneyi boyamaz. Anlam nesnenin üstüne konan işaretle verilir: kılavuz çizgi + etiket, durum yazısı (✓ hızlı), vurgu halkası, ok.
+- **Işık sol üstten**: her gövdede açık tepe, koyu yan; yere değen her şeye yumuşak gölge (`shadow`, `slab` ve `ball` kendisi koyar).
+- **Kontur dolgunun koyu tonu**, asla siyah. Canlılar düzensiz kontur (`smooth(blob(...))`), yapılmış şeyler düz kenar, yuvarlak köşe ve görünür kalınlık.
+- **Derinlik**: arkadan öne çiz, parçalar biraz örtüşsün, içerik gövdeye kırpılsın (`N.clip`).
+- **Doku**: büyük düz dolguya `grain`; tekrar eden küçük parçalar (çip, pim, vida) döngüyle.
+- **Oran ve sayı gerçeğe uyar**: yanlış çizim yanlış öğretir. Sadeleştirildiyse notta söylenir ("çizim sadeleştirilmiş").
+- **Nesnenin içine yazı yok**. Adlar Runik etiketleri olarak yanına yazılır (13/600 ad, 11.5 detay), kılavuz çizgi nesnenin üstünden geçmez; gerekirse önce dik çıkar, sonra yatay gider. Numaralı pin + ayrı lejant kullanılmaz.
+- **Taban sessiz kalır**: harita tabanı, ülke sınırı, arka plan Runik tint/line tonlarında; doğal renk yalnız nesnenin kendisinde.
+- Koyu temada da okunur: nesne kendi rengini korur, etiketler token rengindedir.
 
 ## 5. Kalıplar
 
@@ -153,7 +189,7 @@ Her çizimin akışı: başlık cümlesi → ana görsel → (ayırıcı → bö
 - Görsel seyrek olmaz: her parçanın ne olduğu, ne işe yaradığı ve neye bağlı olduğu üstünde okunur.
 - Soyut bir şey varsa gündelik bir benzetmesi yanına yazılır (not kağıdı, masa, raf, depo, arşiv).
 - Bir çizim tek fikir taşır. Fazlası ikinci çizime.
-- Gerçek dünya nesnesinin tabanı (vücut, makine, ekran, harita) gerçek veriden ya da gerçek görselden gelir, gri tona indirilir; üstüne konan işaretler bu temayla çizilir.
+- Gerçek dünya nesnesi (vücut, makine, dağ) §4b ile doğal renkte çizilir; harita ve ekran görüntüsü gibi tabanlar gerçek veriden gelir ve sessiz tona indirilir. Üstüne konan işaretler bu temayla çizilir.
 
 ## 6b. Okunabilirlik: her işaret tek anlam
 
@@ -179,7 +215,7 @@ Konuyu bilmeyen bir okurun yanlış anladığı yerler hep işaretlerdi, fikir d
 1. Kelime say: başlık hariç ~40 kelimeyi aşan düzyazı teslim edilmez (§0). Her metni bir kez daha "çizilebilir mi?" diye sorgula.
 2. Otomatik denetim: `node runik-lint.js kart.json` (bu klasörde). Tanımsız token, camelCase öznitelik, DOMPurify'ın sildiği öğe, tekrar eden id, kenara taşan ya da çakışan yazı, eksik role/aria-label varsa düzelt.
 3. Ekran görüntüsünü al ve bak: yazılar ve işaretler çakışmıyor, kesilmiyor; oklar doğru nesneye gidiyor.
-4. Yalnızca tablodaki yazı boyutları ve renk rolleri var.
+4. Yalnızca tablodaki yazı boyutları ve renk rolleri var. Nesne çiziminde gövde doğal renkte, anlam renkleri yalnız işaretlerde; id'ler çizime özgü önekli.
 5. 3 saniye testi: başlık ve ana görsel, etiketler okunmadan fikri veriyor.
 6. Açık ve koyu temada okunuyor (renkler token).
 Bilmeyen göz testi (konuyu bilmeyen bir agent'a ekran görüntülerini okutup geri anlatma ve soru cevaplama) teslim adımı değildir; yalnızca Oğuz isterse yapılır, çünkü süreci uzatır. Hızlı denetim için madde 2'deki betik yeterlidir.

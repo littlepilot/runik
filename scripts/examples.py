@@ -226,101 +226,10 @@ EX.append(dict(
 import ex_cell
 EX.append(ex_cell.example())
 
-# =========================================================== 4. lithium-ion battery (cross-section + process)
-COPPER = ('#f8cfaa', '#d98b4e', '#9a5428')
-GRAPHITE = ('#8d929b', '#555b65', '#2b2f36')
-OXIDE = ('#e1e5f2', '#9aa3c7', '#5b6590')
-ELECTROLYTE = ('#fdf9ea', '#f1e8c6', '#c2b383')
-ION = ('#fff6cf', '#f2c94c', '#9b7612')
+# =========================================================== 4. lithium-ion battery (researched, multi-page)
+import ex_battery
+EX.append(ex_battery.example())
 
-
-def battery_cell(N, ions):
-    '''Cross-section: copper foil | graphite (−) | electrolyte + separator | metal oxide (+) | aluminium foil.'''
-    N.add(N.shadow(rrect(0, 0, 400, 160, 6), 4, 7, 5, 0.2))
-    N.add('<path d="%s" fill="%s" stroke="%s" stroke-width="1.5"/>' % (rrect(140, 0, 120, 160, 0), N.linear(ELECTROLYTE[0], ELECTROLYTE[1]), ELECTROLYTE[2]))
-    for k in range(6):
-        N.add('<path d="%s" fill="%s" stroke="%s" stroke-width="1"/>' % (rrect(12, 8 + k * 25, 128, 17, 3), N.linear(GRAPHITE[0], GRAPHITE[1]), GRAPHITE[2]))
-        N.add('<path d="%s" fill="%s" stroke="%s" stroke-width="1"/>' % (rrect(260, 8 + k * 25, 128, 17, 3), N.linear(OXIDE[0], OXIDE[1]), OXIDE[2]))
-    N.add('<path d="%s" fill="%s" stroke="%s" stroke-width="1.2"/>' % (rrect(0, -6, 12, 172, 2), N.linear(COPPER[0], COPPER[1], 0, 0, 1, 0), COPPER[2]))
-    N.add('<path d="%s" fill="%s" stroke="%s" stroke-width="1.2"/>' % (rrect(388, -6, 12, 172, 2), N.linear(N.METAL[0], N.METAL[1], 0, 0, 1, 0), N.METAL[2]))
-    N.add('<path d="M200,0 V160" stroke="%s" stroke-width="3" stroke-dasharray="6 4"/>' % ELECTROLYTE[2])
-    for x, y in ions:
-        N.add(N.ball(x, y, 5.5, cols=ION, stroke=ION[2], sw=1, shadow=0, gloss=0.5))
-    N.mark('neg', 6, -6)
-    N.mark('pos', 394, -6)
-    N.mark('mid', 200, 80)
-    N.mark('anode', 76, 168)
-    N.mark('sep', 200, 168)
-    N.mark('cathode', 324, 168)
-
-
-def phone_icon(x, y):
-    return R(x - 9, y - 15, 18, 30, 'ink', 1.5, rx=4) + L(x - 3, y + 10, x + 3, y + 10, 'ink', 1.5)
-
-
-def plug_icon(x, y):
-    return R(x - 10, y - 8, 20, 16, 'ink', 1.5, rx=4) + L(x - 4, y - 8, x - 4, y - 15, 'ink', 1.5) + L(x + 4, y - 8, x + 4, y - 15, 'ink', 1.5) + L(x, y + 8, x, y + 15, 'ink', 1.5)
-
-
-def battery_main():
-    title = 'A battery moves lithium ions from side to side'
-    b, defs = [], ''
-    gaps = lambda side, n: [(30 + (k % 3) * 40 + side, 29 + (k // 3) * 50 + (k % 2) * 25) for k in range(n)]
-    rows = [('use', 'In use', 'phone on', 1, gaps(0, 3) + [(160, 50), (182, 110), (226, 70)] + gaps(248, 4)),
-            ('charge', 'Charging', 'plugged in', -1, gaps(0, 7) + [(170, 70), (232, 112)] + gaps(248, 1))]
-    for i, (key, name, detail, direction, ions) in enumerate(rows):
-        y0 = 92 + i * 256
-        N = Obj('k20261120-bat-' + key)
-        battery_cell(N, ions)
-        b.append(N.group(188, y0, 0.9))
-        defs += N.defs()
-        b += [T(24, y0 + 64, name, 13, 600), T(24, y0 + 82, detail, 11.5, 400, 'muted')]
-        (nx, ny), (px, py), (mx, my) = N.at('neg'), N.at('pos'), N.at('mid')
-        top = y0 - 30
-        b.append(P('M%.1f %.1f V%d H%.1f V%.1f' % (nx, ny, top, px, py), 'edge', 1.5))
-        cx = (nx + px) / 2
-        b.append(R(cx - 22, top - 20, 44, 40, 'ink', 0, 'surface', 1, rx=6))
-        b.append(phone_icon(cx, top) if direction > 0 else plug_icon(cx, top))
-        for ex in (nx + 50, px - 50):
-            b.append('<path d="M%.1f %d l%d -4.5 v9 z" fill="var(--ink)"/>' % (ex + 4 * direction, top, -8 * direction))
-        b.append(T(nx + 30, top - 8, 'electrons', 11.5, 400, 'muted'))
-        b.append(P('M%.1f %.1f H%.1f' % (mx - 36 * direction, my, mx + 30 * direction), 'focus', 3))
-        b.append('<path d="M%.1f %.1f l%d -6 v12 z" fill="var(--focus)"/>' % (mx + 38 * direction, my, -10 * direction))
-        if i == 0:
-            for k, nm, dt in (('anode', 'Graphite', '− side'), ('sep', 'Separator', 'ions only'), ('cathode', 'Metal oxide', '+ side')):
-                x, yy = N.at(k)
-                b += [T(x, yy + 18, nm, 13, 600, 'ink', 'middle'), T(x, yy + 36, dt, 11.5, 400, 'muted', 'middle')]
-    b.append(L(24, 290, 736, 290))
-    b.append(legend(24, 530, [('arrow', 'focus', 'lithium ions'), ('arrow', 'ink', 'electrons (wire)')]))
-    b.append(T(24, 554, 'simplified drawing · layer and ion counts illustrative', 11.5, 400, 'muted'))
-    return sv(564, title, 'Cross-section of a lithium-ion cell: copper foil, graphite (negative), electrolyte with separator, metal oxide (positive), aluminium foil. In use, lithium ions move from graphite to the metal oxide through the electrolyte while electrons flow through the phone. Charging pushes them back into the graphite.', b, defs)
-
-
-def battery_care():
-    title = 'Batteries age slowest between 20% and 80%'
-    b = [T(24, 62, 'CHARGE LEVEL, ONE CELL = 5%', 11.5, 600, 'muted')]
-    w = 712 / 20
-    for i in range(20):
-        c = 'good' if 4 <= i < 16 else 'warn'
-        b.append(R(24 + i * w + 1, 76, w - 4, 26, c, 1.25, c, 0.25, rx=4))
-    for v in (0, 20, 80, 100):
-        b.append(T(24 + v / 5 * w - (0 if v < 100 else 3), 122, '%d%%' % v, 11.5, 400, 'muted', 'middle' if 0 < v < 100 else ('end' if v == 100 else None)))
-    b += [T(24 + 10 * w, 150, '✓ gentle', 11.5, 600, 'good', 'middle'), T(24 + 2 * w, 150, '! strain', 11.5, 600, 'warn', 'middle'), T(24 + 18 * w, 150, '! strain', 11.5, 600, 'warn', 'middle')]
-    b.append(R(24, 172, 712, 50, 'bad', 2, 'bad', 0.1))
-    b += [T(40, 194, 'Heat ages it fastest', 13, 600), T(40, 212, 'no charging under pillows or in the sun', 11.5)]
-    return sv(232, title, 'Charge level in 5% cells: 20 to 80% is gentle on the battery, the ends below 20% and above 80% strain it. Heat ages it fastest.', b)
-
-
-EX.append(dict(
-    slug='battery', kind='Cross-section', question='How does a lithium-ion battery work?',
-    line='Lithium ions shuttle through the liquid; electrons take the long way through your phone.',
-    chat=[battery_main()],
-    pdf=dict(title='A battery moves lithium ions from side to side', subtitle='How a lithium-ion battery works', cards=[
-        dict(type='drawing', title='', data=[battery_main()]),
-        dict(type='drawing', title='', data=[battery_care()]),
-        dict(type='table', title='The layers', data=dict(columns=['Layer', 'Made of', 'Job'], rows=[
-            ['Negative electrode', 'graphite on copper foil', 'stores ions when charged'], ['Electrolyte', 'lithium salt in solvent', 'lets ions through'],
-            ['Separator', 'porous plastic film', 'keeps the sides from touching'], ['Positive electrode', 'metal oxide on aluminium foil', 'takes ions when in use']]))])))
 
 # =========================================================== 5. eight espresso drinks (researched, multi-page)
 import ex_coffee

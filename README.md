@@ -29,7 +29,7 @@ Runik installs once as a **global Claude Code skill** (`~/.claude/skills/runik`)
 1. Edit `public/skill/runik/rules.md` (or `SKILL.md`).
 2. Bump `version` in `public/skill/runik/version.json` and add a line to `notes`. If the board changed, bump `board`.
 3. `npm run page && npm run check`
-4. `git push` → checks + deploy. Rerun `bash public/install.sh` to update the global skill; the next session republishes the board if `board` went up.
+4. `git push` → Cloudflare deploys. Rerun `bash public/install.sh` to update the global skill; the next session republishes the board if `board` went up.
 
 ## Local
 
@@ -37,4 +37,4 @@ Runik installs once as a **global Claude Code skill** (`~/.claude/skills/runik`)
     npm run dev        # wrangler dev
     npm run deploy     # wrangler deploy (manual)
 
-For automatic deploys add `CLOUDFLARE_API_TOKEN` (Workers Scripts: Edit) and `CLOUDFLARE_ACCOUNT_ID` to the repo secrets; without them CI only runs the checks.
+Deploys are automatic: Cloudflare Workers Builds is connected to this repo and deploys `main` on every push (`public/index.html` is committed, so no build step is needed). Run `npm run page && npm run check` before pushing.

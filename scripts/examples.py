@@ -416,91 +416,10 @@ EX.append(dict(
             ['Negative electrode', 'graphite on copper foil', 'stores ions when charged'], ['Electrolyte', 'lithium salt in solvent', 'lets ions through'],
             ['Separator', 'porous plastic film', 'keeps the sides from touching'], ['Positive electrode', 'metal oxide on aluminium foil', 'takes ions when in use']]))])))
 
-# =========================================================== 5. eight coffees (comparison)
-LAYER = {'espresso': ('#7a4a2c', '#4a2a17'), 'crema': ('#d29a5c', '#a86c35'), 'milk': ('#f6ecdd', '#d9c6aa'), 'foam': ('#fffdf8', '#e6dccd'),
-         'water': ('#a9714a', '#7a4a2c'), 'chocolate': ('#5a3320', '#3a1f12')}
-NAMES = {'espresso': 'espresso', 'milk': 'steamed milk', 'foam': 'foam', 'water': 'hot water', 'chocolate': 'chocolate'}
-DRINKS = [('Espresso', [('espresso', 30)]), ('Macchiato', [('espresso', 30), ('foam', 15)]), ('Cortado', [('espresso', 30), ('milk', 30)]),
-          ('Flat white', [('espresso', 60), ('milk', 100), ('foam', 10)]), ('Cappuccino', [('espresso', 30), ('milk', 60), ('foam', 60)]),
-          ('Americano', [('espresso', 30), ('water', 120)]), ('Mocha', [('chocolate', 20), ('espresso', 30), ('milk', 140), ('foam', 20)]),
-          ('Latte', [('espresso', 30), ('milk', 200), ('foam', 15)])]
-SHARE = lambda d: sum(v for k, v in d[1] if k == 'espresso') / sum(v for _, v in d[1])
+# =========================================================== 5. eight espresso drinks (researched, multi-page)
+import ex_coffee
+EX.append(ex_coffee.example())
 
-
-def glass(N, cx, base, layers, px=0.72):
-    '''Straight glass seen from the side; layers bottom to top, height ∝ millilitres.'''
-    w, y = 54, base
-    h = sum(v for _, v in layers) * px
-    out = []
-    for k, (kind, v) in enumerate(layers):
-        lh = v * px
-        c = LAYER[kind]
-        out.append('<path d="%s" fill="%s"/>' % (rrect(cx - w / 2 + 3, y - lh, w - 6, lh, 2 if k == 0 else 0), N.linear(c[0], c[1], 0, 0, 1, 0)))
-        if kind == 'espresso' and (k == len(layers) - 1 or layers[k + 1][0] != 'water'):
-            out.append('<path d="%s" fill="%s"/>' % (rrect(cx - w / 2 + 3, y - lh, w - 6, min(4, lh / 3), 0), LAYER['crema'][0]))
-        y -= lh
-    top = base - h - 8
-    N.add(N.shadow(rrect(cx - w / 2, top, w, base - top, 6), 2, 4, 3, 0.15))
-    N.add('<path d="%s" fill="%s" opacity="0.5"/>' % (rrect(cx - w / 2, top, w, base - top, 6), N.GLASS[0]))
-    N.add(*out)
-    N.add('<path d="M%.1f,%.1f V%.1f q0,6 6,6 H%.1f q6,0 6,-6 V%.1f" fill="none" stroke="%s" stroke-width="2"/>' % (cx - w / 2, top, base, cx + w / 2 - 6, top, N.GLASS[2]))
-    N.add('<path d="M%.1f,%.1f V%.1f" stroke="#fff" stroke-width="3" opacity="0.7" stroke-linecap="round"/>' % (cx - w / 2 + 7, top + 6, base - 6))
-    return h
-
-
-def coffee_main():
-    title = 'Same espresso base, eight drinks: milk decides'
-    N = Obj('k20261120-cof')
-    b = []
-    base = 262
-    for i, d in enumerate(DRINKS):
-        cx = 68 + i * 89
-        glass(N, cx, base, d[1])
-        ml = sum(v for _, v in d[1])
-        b += [T(cx, base + 26, d[0], 13, 600, 'ink', 'middle'), T(cx, base + 44, '~%d ml' % ml, 11.5, 400, 'muted', 'middle')]
-    b.insert(0, N.group(0, 0, 1))
-    b.append(L(24, 324, 736, 324))
-    b.append(T(24, 350, 'How much of the cup is coffee', 14, 600))
-    for i, d in enumerate(DRINKS):
-        cx = 68 + i * 89
-        sh = SHARE(d)
-        b.append(R(cx - 30, 366, 60, 12, 'edge', 1.25, rx=3))
-        b.append('<rect x="%.1f" y="366" width="%.1f" height="12" rx="3" fill="var(--focus)" fill-opacity="0.35" stroke="var(--focus)" stroke-width="1.5"/>' % (cx - 30, max(60 * sh, 2)))
-        b.append(T(cx, 396, '%d%%' % round(sh * 100), 11.5, 600, 'ink', 'middle'))
-    lx = 24
-    for k in ('espresso', 'milk', 'foam', 'water', 'chocolate'):
-        b.append('<rect x="%d" y="418" width="16" height="16" rx="3" fill="%s" stroke="%s" stroke-width="1"/>' % (lx, LAYER[k][0], LAYER[k][1]))
-        b.append(T(lx + 22, 431, NAMES[k], 11.5, 400, 'muted'))
-        lx += 22 + len(NAMES[k]) * 6.4 + 24
-    b.append(T(24, 460, 'cup height ∝ volume · typical café recipes, vary by shop', 11.5, 400, 'muted'))
-    return sv(470, title, 'Eight coffee drinks as glasses, height proportional to volume: espresso 30 ml (100% coffee), macchiato 45 ml (67%), cortado 60 ml (50%), flat white 170 ml with a double shot (35%), cappuccino 150 ml (20%), americano 150 ml with water (20%), mocha 210 ml with chocolate (14%), latte 245 ml (12%).', b, N.defs())
-
-
-def coffee_rank():
-    title = 'From strongest to mildest'
-    ds = sorted(DRINKS, key=lambda d: -SHARE(d))
-    b = [T(24, 62, 'ESPRESSO SHARE OF THE CUP, BARS FROM 0', 11.5, 600, 'muted')]
-    for i, d in enumerate(ds):
-        y = 80 + i * 26
-        sh = SHARE(d)
-        b.append(T(24, y + 11, d[0], 13, 600))
-        b.append(hbar(140, y, sh * 520, 'focus'))
-        b.append(T(140 + sh * 520 + 8, y + 11, '%d%%' % round(sh * 100), 11.5, 600))
-    b.append(T(24, 300, 'a flat white has a double shot, so it tastes stronger than a cappuccino', 11.5, 400, 'muted'))
-    return sv(310, title, 'Espresso share of the cup: espresso 100%, macchiato 67%, cortado 50%, flat white 35%, cappuccino 20%, americano 20%, mocha 14%, latte 12%.', b)
-
-
-EX.append(dict(
-    slug='coffee', kind='Comparison', question='What’s the difference between espresso, latte, macchiato and the rest?',
-    line='Almost all of them start with the same espresso; the milk, foam or water on top makes the drink.',
-    chat=[coffee_main()],
-    pdf=dict(title='Same espresso base, eight drinks: milk decides', subtitle='Eight coffee drinks compared', cards=[
-        dict(type='drawing', title='', data=[coffee_main()]),
-        dict(type='drawing', title='', data=[coffee_rank()]),
-        dict(type='table', title='Recipes', data=dict(columns=['Drink', 'Espresso', 'Milk', 'Foam', 'Other'], rows=[
-            [d[0]] + ['%d ml' % dict(d[1]).get(k) if dict(d[1]).get(k) else '—' for k in ('espresso', 'milk', 'foam')] +
-            [('%d ml water' % dict(d[1])['water']) if 'water' in dict(d[1]) else ('%d ml chocolate' % dict(d[1])['chocolate']) if 'chocolate' in dict(d[1]) else '—']
-            for d in DRINKS]))])))
 
 # =========================================================== build
 def main():
@@ -510,20 +429,31 @@ def main():
     for e in EX:
         allsvg += e['chat'] + [s for c in e['pdf']['cards'] if c['type'] == 'drawing' for s in c['data'] if s not in e['chat']]
     json.dump(allsvg, open(os.path.join(K, 'examples.svgs.json'), 'w', encoding='utf-8'), ensure_ascii=False)
-    json.dump([dict(slug=e['slug'], kind=e['kind'], question=e['question'], line=e['line'], chat=e['chat'], title=e['pdf']['title']) for e in EX],
-              open(os.path.join(K, 'examples.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
-    if '--no-pdf' in sys.argv:
-        print('examples: %d (no PDFs)' % len(EX)); return
+    meta = []
     for e in EX:
-        doc = dict(e['pdf'], title=e['question'], subtitle=e['line'], lang='en', date='2026-11-20')
-        src = os.path.join(out, e['slug'] + '.json')
-        json.dump(doc, open(src, 'w', encoding='utf-8'), ensure_ascii=False)
-        subprocess.run([sys.executable, os.path.join(SK, 'runik_pdf.py'), src, '-o', os.path.join(out, e['slug'] + '.pdf')], check=True)
-        os.remove(src)
-        if shutil.which('pdftoppm'):  # first page preview for the site
-            subprocess.run(['pdftoppm', '-png', '-f', '1', '-l', '1', '-singlefile', '-scale-to', '900',
-                            os.path.join(out, e['slug'] + '.pdf'), os.path.join(out, e['slug'])], check=True)
-    print('examples: %d, PDFs in public/examples/' % len(EX))
+        d = os.path.join(out, e['slug'])
+        pages = sorted(f for f in os.listdir(d) if f.startswith('page-') and f.endswith('.png')) if os.path.isdir(d) else []
+        meta.append(dict(slug=e['slug'], kind=e['kind'], title=e.get('title') or e['pdf']['title'], prompt=e.get('prompt') or e['question'],
+                         line=e['line'], chat=e['chat'], pdf_title=e.get('title') or e['question'], pages=pages))
+    if '--no-pdf' not in sys.argv:
+        for e, m in zip(EX, meta):
+            d = os.path.join(out, e['slug'])
+            if os.path.isdir(d):
+                shutil.rmtree(d)
+            os.makedirs(d)
+            title = e.get('title') or e['question']
+            subtitle = e['pdf'].get('subtitle') if e.get('prompt') else e['line']
+            doc = dict(e['pdf'], title=title, subtitle=subtitle, lang='en', date='2026-11-20')
+            src = os.path.join(d, 'doc.json')
+            json.dump(doc, open(src, 'w', encoding='utf-8'), ensure_ascii=False)
+            pdf = os.path.join(d, e['slug'] + '.pdf')
+            subprocess.run([sys.executable, os.path.join(SK, 'runik_pdf.py'), src, '-o', pdf], check=True)
+            os.remove(src)
+            if shutil.which('pdftoppm'):  # page previews for the example page
+                subprocess.run(['pdftoppm', '-png', '-scale-to', '900', pdf, os.path.join(d, 'page')], check=True)
+            m['pages'] = sorted(f for f in os.listdir(d) if f.startswith('page-') and f.endswith('.png'))
+    json.dump(meta, open(os.path.join(K, 'examples.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
+    print('examples: %d%s' % (len(EX), '' if '--no-pdf' in sys.argv else ', PDFs in public/examples/<slug>/'))
 
 
 if __name__ == '__main__':

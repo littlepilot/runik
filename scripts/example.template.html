@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{title}} · Runik example</title>
+<meta name="description" content="A Runik example: {{title}}. The prompt, the drawn answer in the chat and the same answer as a PDF.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<style>
+{{style}}
+.exhead{padding:56px 0 8px}
+.exhead h1{font-size:clamp(34px,5vw,56px);max-width:18ch}
+.back{display:inline-block;margin-bottom:28px;color:var(--muted);text-decoration:none;font-size:14px}
+.back:hover{color:var(--fg)}
+.prompt-box{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--focus);border-radius:12px;padding:18px 20px;max-width:820px;font-size:16px;line-height:1.6;margin:0}
+.answer{display:grid;gap:14px;max-width:880px}
+.answer p{margin:0;font-size:16px}
+.answer svg{width:100%;height:auto;display:block}
+.pages{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:18px;max-width:1000px}
+.pages a{display:block}
+.pages img{width:100%;height:auto;display:block;border:1px solid var(--line);border-radius:8px;box-shadow:0 6px 18px rgba(20,24,35,.08);background:#fff}
+.dl{display:inline-flex;margin:0 0 20px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="exhead">
+  <a class="back" href="/#examples">← All examples</a>
+  <p class="eyebrow">Example · {{kind}}</p>
+  <h1>{{title}}</h1>
+</div>
+
+<section aria-labelledby="prompt-h">
+  <h2 id="prompt-h">The prompt</h2>
+  <blockquote class="prompt-box">{{prompt}}</blockquote>
+</section>
+
+<section aria-labelledby="chat-h">
+  <h2 id="chat-h">The answer in the chat</h2>
+  <div class="panel answer"><p>{{line}}</p>{{chat}}</div>
+</section>
+
+<section aria-labelledby="pdf-h">
+  <h2 id="pdf-h">The PDF</h2>
+  <a class="btn dl" href="{{pdf}}">Download PDF · {{npages}}</a>
+  <div class="pages">
+{{pages}}
+  </div>
+</section>
+
+<footer><span>Runik {{version}}</span><a href="/">runik</a><a href="https://github.com/littlepilot/runik">GitHub</a></footer>
+</div>
+</body>
+</html>

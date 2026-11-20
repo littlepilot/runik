@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>On a blanket, your laptop can’t breathe · Runik example</title>
+<meta name="description" content="A Runik example: On a blanket, your laptop can’t breathe. The prompt, the drawn answer in the chat and the same answer as a PDF.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<style>
+
+@font-face{font-family:Inter;src:url(/fonts/inter.woff2) format("woff2");font-weight:100 900;font-display:swap;unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:Inter;src:url(/fonts/inter-tr.woff2) format("woff2");font-weight:100 900;font-display:swap;unicode-range:U+011E-011F,U+0130-0131,U+015E-015F}
+@font-face{font-family:"Space Grotesk";src:url(/fonts/sg.woff2) format("woff2");font-weight:300 700;font-display:swap;unicode-range:U+0000-00FF,U+0131,U+2000-206F,U+2212}
+@font-face{font-family:"Space Grotesk";src:url(/fonts/sg-tr.woff2) format("woff2");font-weight:300 700;font-display:swap;unicode-range:U+011E-011F,U+0130-0131,U+015E-015F}
+:root{
+  --bg:#f3f4f7;--surface:#fff;--fg:#1b1f2a;--ink:#1b1f2a;--muted:#5f6779;--edge:#8a93a5;--line:#dadfe7;
+  --good:#15803d;--warn:#b45309;--bad:#c81e1e;--focus:#2f5bd8;--k2:#3f8f84;--tint:#eef0f4;--rune:#c2410c;
+  --display:"Space Grotesk",system-ui,sans-serif;--body:Inter,system-ui,sans-serif;--mono:ui-monospace,"SF Mono",Menlo,monospace;
+  color-scheme:light dark;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#101319;--surface:#191d26;--fg:#e8ebf2;--ink:#e8ebf2;--muted:#98a1b3;--edge:#636c80;--line:#2c3240;
+  --good:#4ade80;--warn:#fbbf24;--bad:#f87171;--focus:#7d9cf5;--k2:#5eb3a7;--tint:#1d2230;--rune:#fb923c}}
+:root[data-theme="dark"]{--bg:#101319;--surface:#191d26;--fg:#e8ebf2;--ink:#e8ebf2;--muted:#98a1b3;--edge:#636c80;--line:#2c3240;--good:#4ade80;--warn:#fbbf24;--bad:#f87171;--focus:#7d9cf5;--k2:#5eb3a7;--tint:#1d2230;--rune:#fb923c}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 var(--body);-webkit-font-smoothing:antialiased}
+svg text{font-family:var(--body);font-feature-settings:"calt" 0}
+a{color:inherit}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+header{display:flex;align-items:center;justify-content:space-between;height:68px}
+.logo{display:flex;align-items:center;gap:10px;font:600 19px/1 var(--display);text-decoration:none;letter-spacing:-.01em}
+.logo svg{width:26px;height:26px}
+nav{display:flex;gap:22px;font-size:14px;color:var(--muted)}
+nav a{text-decoration:none}nav a:hover{color:var(--fg)}
+.btn{display:inline-flex;align-items:center;gap:8px;background:var(--fg);color:var(--bg);font:600 15px/1 var(--body);padding:13px 20px;border-radius:10px;text-decoration:none;border:0;cursor:pointer}
+.btn:hover{opacity:.88}
+.btn.ghost{background:transparent;color:var(--fg);box-shadow:inset 0 0 0 1.5px var(--line)}
+.hero{padding:64px 0 8px}
+h1{font:700 clamp(40px,7.4vw,84px)/1 var(--display);letter-spacing:-.04em;margin:0 0 22px}
+h1 em{font-style:normal;color:var(--focus)}
+.lead{font-size:20px;color:var(--muted);max-width:44ch;margin:0 0 28px}
+.line{display:flex;align-items:center;gap:8px;max-width:760px;background:var(--surface);border:1.5px solid var(--focus);border-radius:12px;padding:8px 8px 8px 16px}
+.line code{flex:1;min-width:0;font:14px/1.5 var(--mono);overflow-x:auto;white-space:nowrap;scrollbar-width:none}
+.line code::-webkit-scrollbar{display:none}
+.line .btn{flex:none;padding:9px 14px;font-size:13.5px}
+.hint{font-size:14px;color:var(--muted);margin:12px 0 0}
+section{padding:56px 0}
+.eyebrow{font:600 12.5px/1 var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 14px}
+h2{font:700 clamp(26px,3.6vw,38px)/1.1 var(--display);letter-spacing:-.025em;margin:0 0 28px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px}
+.vs{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:20px;align-items:start}
+.vs .tag{display:inline-flex;align-items:center;gap:8px;font:600 13px/1 var(--body);margin-bottom:14px}
+.vs .tag i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.prose{font-size:14.5px;line-height:1.7;color:var(--muted);position:relative;max-height:420px;overflow:hidden}
+.prose p{margin:0 0 12px}
+.prose:after{content:"";position:absolute;left:0;right:0;bottom:0;height:90px;background:linear-gradient(transparent,var(--surface))}
+#compare{padding-top:40px}
+.vs+.panel{margin-top:20px}
+.vs .panel:first-child .prose{font-size:13.5px}
+.fig{max-width:820px}
+.gal{display:grid;gap:20px}
+.gal figure{margin:0}
+.gal figcaption{font-size:13px;color:var(--muted);margin:10px 4px 0}
+.exs{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.excard{display:grid;gap:8px;text-decoration:none;color:var(--fg);transition:border-color .15s}
+.excard:hover{border-color:var(--focus)}
+.excard b{font:600 20px/1.25 var(--display);letter-spacing:-.01em}
+.excard .more{font-size:13.5px;color:var(--muted)}
+.kind{font:600 11.5px/1 var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.kur{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;max-width:820px}
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.step{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;font-size:14px;display:grid;grid-template-columns:32px minmax(0,1fr);gap:4px 14px;align-items:start}
+.step svg{width:32px;height:32px;grid-row:span 2}
+.step b{display:block;font:600 14px/1.3 var(--body);margin-bottom:2px}
+.step span{color:var(--muted);font-size:13px}
+.notes{list-style:none;margin:0;padding:0;max-width:820px}
+details.more{max-width:820px}
+details.more summary{cursor:pointer;color:var(--muted);font-size:14px;padding:12px 0;border-top:1px solid var(--line);list-style:none}
+details.more summary::-webkit-details-marker{display:none}
+details.more[open] summary{display:none}
+.notes li{display:grid;grid-template-columns:80px 110px minmax(0,1fr);gap:12px;padding:12px 0;border-top:1px solid var(--line);font-size:14.5px}
+.notes code{font:600 13.5px var(--mono)}
+.notes time{color:var(--muted);font-size:13.5px}
+footer .by{margin-left:auto}
+footer{padding:40px 0 60px;color:var(--muted);font-size:13.5px;display:flex;gap:18px;flex-wrap:wrap;border-top:1px solid var(--line);margin-top:24px}
+code.inline{font:13.5px var(--mono);background:var(--tint);padding:2px 6px;border-radius:5px}
+@media (max-width:820px){
+  .vs{grid-template-columns:minmax(0,1fr)}
+  .steps{grid-template-columns:minmax(0,1fr)}
+  nav a:not(.btn){display:none}
+  .wrap{padding:0 16px}
+  .hero{padding:40px 0 20px}
+  section{padding:40px 0}
+  .panel{padding:12px}
+  details.more{max-width:820px}
+details.more summary{cursor:pointer;color:var(--muted);font-size:14px;padding:12px 0;border-top:1px solid var(--line);list-style:none}
+details.more summary::-webkit-details-marker{display:none}
+details.more[open] summary{display:none}
+.notes li{grid-template-columns:64px minmax(0,1fr)}.notes time{display:none}
+  .panel{overflow-x:auto;-webkit-overflow-scrolling:touch}.panel>svg,.panel figure>svg,figure.panel>svg{min-width:640px}
+}
+
+.exhead{padding:56px 0 8px}
+.exhead h1{font-size:clamp(34px,5vw,56px);max-width:18ch}
+.back{display:inline-block;margin-bottom:28px;color:var(--muted);text-decoration:none;font-size:14px}
+.back:hover{color:var(--fg)}
+.prompt-box{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--focus);border-radius:12px;padding:18px 20px;max-width:820px;font-size:16px;line-height:1.6;margin:0}
+.answer{display:grid;gap:14px;max-width:880px}
+.answer p{margin:0;font-size:16px}
+.answer svg{width:100%;height:auto;display:block}
+.pages{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:18px;max-width:1000px}
+.pages a{display:block}
+.pages img{width:100%;height:auto;display:block;border:1px solid var(--line);border-radius:8px;box-shadow:0 6px 18px rgba(20,24,35,.08);background:#fff}
+.dl{display:inline-flex;margin:0 0 20px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="exhead">
+  <a class="back" href="/#examples">← All examples</a>
+  <p class="eyebrow">Example · Object drawing</p>
+  <h1>On a blanket, your laptop can’t breathe</h1>
+</div>
+
+<section aria-labelledby="prompt-h">
+  <h2 id="prompt-h">The prompt</h2>
+  <blockquote class="prompt-box">Why does my laptop get so hot on the bed?</blockquote>
+</section>
+
+<section aria-labelledby="chat-h">
+  <h2 id="chat-h">The answer in the chat</h2>
+  <div class="panel answer"><p>It sits on its own air intake: the blanket seals the vents underneath.</p><svg viewBox="0 0 760 426" width="100%" font-size="13" role="img" aria-label="On a blanket, your laptop can’t breathe"><title>On a blanket, your laptop can’t breathe</title><desc>Laptop side view. On a desk the rubber feet leave a gap: cool air enters underneath and warm air leaves at the back; CPU about 70 °C, full speed. On a blanket the fabric seals the bottom vents, heat stays inside; CPU about 95 °C, at the limit, so it slows down.</desc><defs><filter id="k20261120-lap-desk-d0" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="8"/></filter><linearGradient id="k20261120-lap-desk-d1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f1d3a6"/><stop offset="1" stop-color="#c9955a"/></linearGradient><filter id="k20261120-lap-desk-d2" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="3"/></filter><linearGradient id="k20261120-lap-desk-d3" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#d3d8de"/><stop offset="1" stop-color="#8d96a2"/></linearGradient><linearGradient id="k20261120-lap-desk-d4" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7f8fa"/><stop offset="1" stop-color="#d3d8de"/></linearGradient><filter id="k20261120-lap-blanket-d0" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="3"/></filter><linearGradient id="k20261120-lap-blanket-d1" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#d3d8de"/><stop offset="1" stop-color="#8d96a2"/></linearGradient><linearGradient id="k20261120-lap-blanket-d2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f7f8fa"/><stop offset="1" stop-color="#d3d8de"/></linearGradient><filter id="k20261120-lap-blanket-d3" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="4"/></filter><linearGradient id="k20261120-lap-blanket-d4" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e3e8f2"/><stop offset="1" stop-color="#b9c3d6"/></linearGradient></defs><text x="24" y="30" font-size="15" font-weight="600" fill="var(--ink)">On a blanket, your laptop can’t breathe</text><g transform="translate(170 30) scale(0.78)"><path d="M-46.0,176.0 h372.0 a4,4 0 0 1 4,4 v8.0 a4,4 0 0 1 -4,4 h-372.0 a4,4 0 0 1 -4,-4 v-8.0 a4,4 0 0 1 4,-4 Z" fill="#2b1c0e" opacity="0.2" filter="url(#k20261120-lap-desk-d0)" transform="translate(5 9)"/><path d="M-46.0,176.0 h372.0 a4,4 0 0 1 4,4 v8.0 a4,4 0 0 1 -4,4 h-372.0 a4,4 0 0 1 -4,-4 v-8.0 a4,4 0 0 1 4,-4 Z" fill="#8a5a2b"/><path d="M-46.0,166.0 h372.0 a4,4 0 0 1 4,4 v8.0 a4,4 0 0 1 -4,4 h-372.0 a4,4 0 0 1 -4,-4 v-8.0 a4,4 0 0 1 4,-4 Z" fill="url(#k20261120-lap-desk-d1)" stroke="#8a5a2b" stroke-width="1.5"/><path d="M-46.0,169.0 h372.0" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity="0.65"/><path d="M6.0,140.0 h248.0 a6,6 0 0 1 6,6 v8.0 a6,6 0 0 1 -6,6 h-248.0 a6,6 0 0 1 -6,-6 v-8.0 a6,6 0 0 1 6,-6 Z" fill="#2b1c0e" opacity="0.2" filter="url(#k20261120-lap-desk-d2)" transform="translate(3 4)"/><path d="M244,142 L300,12 L309,15 L256,144 Z" fill="url(#k20261120-lap-desk-d3)" stroke="#8d96a2" stroke-width="1.5" stroke-linejoin="round"/><path d="M6.0,140.0 h248.0 a6,6 0 0 1 6,6 v8.0 a6,6 0 0 1 -6,6 h-248.0 a6,6 0 0 1 -6,-6 v-8.0 a6,6 0 0 1 6,-6 Z" fill="url(#k20261120-lap-desk-d4)" stroke="#8d96a2" stroke-width="1.5"/><rect x="40" y="138" width="16" height="3" rx="1" fill="#353a42"/><rect x="60" y="138" width="16" height="3" rx="1" fill="#353a42"/><rect x="80" y="138" width="16" height="3" rx="1" fill="#353a42"/><rect x="100" y="138" width="16" height="3" rx="1" fill="#353a42"/><rect x="120" y="138" width="16" height="3" rx="1" fill="#353a42"/><rect x="140" y="138" width="16" height="3" rx="1" fill="#353a42"/><rect x="160" y="138" width="16" height="3" rx="1" fill="#353a42"/><rect x="180" y="138" width="16" height="3" rx="1" fill="#353a42"/><rect x="200" y="138" width="16" height="3" rx="1" fill="#353a42"/><rect x="24" y="160" width="18" height="7" rx="3" fill="#1b1e22"/><rect x="220" y="160" width="18" height="7" rx="3" fill="#1b1e22"/><rect x="92" y="146" width="3" height="10" rx="1" fill="#353a42"/><rect x="101" y="146" width="3" height="10" rx="1" fill="#353a42"/><rect x="110" y="146" width="3" height="10" rx="1" fill="#353a42"/><rect x="119" y="146" width="3" height="10" rx="1" fill="#353a42"/><rect x="128" y="146" width="3" height="10" rx="1" fill="#353a42"/><rect x="137" y="146" width="3" height="10" rx="1" fill="#353a42"/></g><text x="24" y="124" font-size="13" font-weight="600" fill="var(--ink)">On a desk</text><text x="24" y="142" font-size="11.5" font-weight="400" fill="var(--muted)">feet lift it</text><path d="M139.7 159.9 H253.7" stroke="var(--good)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M259.7 159.9 l-6 -3.5 v7 z" fill="var(--good)"/><path d="M380.4 147.0 h36" stroke="var(--warn)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M422.4 147.0 l-6 -3.5 v7 z" fill="var(--warn)"/><line x1="520" y1="121" x2="720" y2="121" stroke="var(--line)" stroke-width="1"/><rect x="520.0" y="114" width="140.0" height="14" rx="3" fill="var(--good)" fill-opacity="0.3" stroke="var(--good)" stroke-width="1.5"/><text x="520" y="106" font-size="11.5" font-weight="600" fill="var(--ink)">CPU ~70 °C</text><text x="520" y="148" font-size="11.5" font-weight="600" fill="var(--good)">✓ full speed</text><g transform="translate(170 200) scale(0.78)"><path d="M6.0,140.0 h248.0 a6,6 0 0 1 6,6 v8.0 a6,6 0 0 1 -6,6 h-248.0 a6,6 0 0 1 -6,-6 v-8.0 a6,6 0 0 1 6,-6 Z" fill="#2b1c0e" opacity="0.2" filter="url(#k20261120-lap-blanket-d0)" transform="translate(3 4)"/><path d="M244,142 L300,12 L309,15 L256,144 Z" fill="url(#k20261120-lap-blanket-d1)" stroke="#8d96a2" stroke-width="1.5" stroke-linejoin="round"/><path d="M6.0,140.0 h248.0 a6,6 0 0 1 6,6 v8.0 a6,6 0 0 1 -6,6 h-248.0 a6,6 0 0 1 -6,-6 v-8.0 a6,6 0 0 1 6,-6 Z" fill="url(#k20261120-lap-blanket-d2)" stroke="#8d96a2" stroke-width="1.5"/><rect x="40" y="138" width="16" height="3" rx="1" fill="#353a42"/><rect x="60" y="138" width="16" height="3" rx="1" fill="#353a42"/><rect x="80" y="138" width="16" height="3" rx="1" fill="#353a42"/><rect x="100" y="138" width="16" height="3" rx="1" fill="#353a42"/><rect x="120" y="138" width="16" height="3" rx="1" fill="#353a42"/><rect x="140" y="138" width="16" height="3" rx="1" fill="#353a42"/><rect x="160" y="138" width="16" height="3" rx="1" fill="#353a42"/><rect x="180" y="138" width="16" height="3" rx="1" fill="#353a42"/><rect x="200" y="138" width="16" height="3" rx="1" fill="#353a42"/><rect x="24" y="160" width="18" height="7" rx="3" fill="#1b1e22"/><rect x="220" y="160" width="18" height="7" rx="3" fill="#1b1e22"/><rect x="92" y="146" width="3" height="10" rx="1" fill="#353a42"/><rect x="101" y="146" width="3" height="10" rx="1" fill="#353a42"/><rect x="110" y="146" width="3" height="10" rx="1" fill="#353a42"/><rect x="119" y="146" width="3" height="10" rx="1" fill="#353a42"/><rect x="128" y="146" width="3" height="10" rx="1" fill="#353a42"/><rect x="137" y="146" width="3" height="10" rx="1" fill="#353a42"/><path d="M-60.0,190.0 C-105.5,185.8 -55.8,157.3 -50.0,154.0 C-44.2,150.7 -20.5,162.2 -10.0,162.0 C0.5,161.8 26.0,152.1 40.0,152.0 C54.0,151.9 94.8,161.1 110.0,161.0 C125.2,160.9 156.0,150.9 170.0,151.0 C184.0,151.1 216.0,161.8 230.0,162.0 C244.0,162.2 278.3,152.8 290.0,153.0 C301.7,153.2 324.2,159.7 330.0,164.0 C335.8,168.3 385.5,187.0 340.0,190.0 C294.5,193.0 -14.5,194.2 -60.0,190.0Z" fill="#2b1c0e" opacity="0.15" filter="url(#k20261120-lap-blanket-d3)" transform="translate(2 4)"/><path d="M-60.0,190.0 C-105.5,185.8 -55.8,157.3 -50.0,154.0 C-44.2,150.7 -20.5,162.2 -10.0,162.0 C0.5,161.8 26.0,152.1 40.0,152.0 C54.0,151.9 94.8,161.1 110.0,161.0 C125.2,160.9 156.0,150.9 170.0,151.0 C184.0,151.1 216.0,161.8 230.0,162.0 C244.0,162.2 278.3,152.8 290.0,153.0 C301.7,153.2 324.2,159.7 330.0,164.0 C335.8,168.3 385.5,187.0 340.0,190.0 C294.5,193.0 -14.5,194.2 -60.0,190.0Z" fill="url(#k20261120-lap-blanket-d4)" stroke="#7f8ba3" stroke-width="1.5"/><path d="M-20,174 q12,8 26,2" fill="none" stroke="#7f8ba3" stroke-width="1.2" opacity="0.7"/><path d="M50,174 q12,8 26,2" fill="none" stroke="#7f8ba3" stroke-width="1.2" opacity="0.7"/><path d="M120,174 q12,8 26,2" fill="none" stroke="#7f8ba3" stroke-width="1.2" opacity="0.7"/><path d="M190,174 q12,8 26,2" fill="none" stroke="#7f8ba3" stroke-width="1.2" opacity="0.7"/><path d="M260,174 q12,8 26,2" fill="none" stroke="#7f8ba3" stroke-width="1.2" opacity="0.7"/></g><text x="24" y="294" font-size="13" font-weight="600" fill="var(--ink)">On a blanket</text><text x="24" y="312" font-size="11.5" font-weight="400" fill="var(--muted)">vents covered</text><path d="M255.7 329.92 l9 9 M264.7 329.92 l-9 9" stroke="var(--bad)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M241.4 298.1 q5 -6 0 -12 q-5 -6 0 -12" stroke="var(--bad)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M271.4 298.1 q5 -6 0 -12 q-5 -6 0 -12" stroke="var(--bad)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M301.4 298.1 q5 -6 0 -12 q-5 -6 0 -12" stroke="var(--bad)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><line x1="520" y1="291" x2="720" y2="291" stroke="var(--line)" stroke-width="1"/><rect x="520.0" y="284" width="190.0" height="14" rx="3" fill="var(--bad)" fill-opacity="0.3" stroke="var(--bad)" stroke-width="1.5"/><text x="520" y="276" font-size="11.5" font-weight="600" fill="var(--ink)">CPU ~95 °C</text><text x="520" y="318" font-size="11.5" font-weight="600" fill="var(--bad)">✗ slows down</text><line x1="710" y1="96" x2="710" y2="312" stroke="var(--ink)" stroke-width="1.25" stroke-dasharray="3 3"/><text x="712" y="88" font-size="11.5" font-weight="600" fill="var(--ink)" text-anchor="end">95 °C limit</text><line x1="24" y1="214" x2="736" y2="214" stroke="var(--line)" stroke-width="1"/><path d="M24 388 H36" stroke="var(--good)" stroke-width="2" fill="none"/><path d="M36 384.5 L42 388 L36 391.5 Z" fill="var(--good)"/><text x="48" y="392" font-size="11.5" font-weight="400" fill="var(--muted)">cool air in</text><path d="M140.4 388 H152.4" stroke="var(--warn)" stroke-width="2" fill="none"/><path d="M152.4 384.5 L158.4 388 L152.4 391.5 Z" fill="var(--warn)"/><text x="164.4" y="392" font-size="11.5" font-weight="400" fill="var(--muted)">warm air out</text><path d="M263.20000000000005 388 H275.20000000000005" stroke="var(--bad)" stroke-width="2" fill="none"/><path d="M275.20000000000005 384.5 L281.20000000000005 388 L275.20000000000005 391.5 Z" fill="var(--bad)"/><text x="287.20000000000005" y="392" font-size="11.5" font-weight="400" fill="var(--muted)">heat trapped</text><text x="24" y="416" font-size="11.5" font-weight="400" fill="var(--muted)">simplified drawing · temperatures typical</text></svg></div>
+</section>
+
+<section aria-labelledby="pdf-h">
+  <h2 id="pdf-h">The PDF</h2>
+  <a class="btn dl" href="/examples/laptop/laptop.pdf">Download PDF · 1 page</a>
+  <div class="pages">
+    <a href="/examples/laptop/laptop.pdf#page=1"><img src="/examples/laptop/page-1.png" alt="Page 1 of the PDF" width="637" height="900" loading="lazy"></a>
+  </div>
+</section>
+
+<footer><span>Runik 0.7.1</span><a href="/">runik</a><a href="https://github.com/littlepilot/runik">GitHub</a></footer>
+</div>
+</body>
+</html>

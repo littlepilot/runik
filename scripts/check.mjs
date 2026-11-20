@@ -1,5 +1,5 @@
 // Before deploy: drawing rules (runik-lint), HTML validity, placeholders, light/dark + narrow/wide screenshots.
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, readdirSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { createServer } from 'node:http';
 import { join, extname } from 'node:path';
@@ -23,7 +23,8 @@ try {
 } catch (e) { errors.push('runik-lint:\n' + (e.stdout || e.message)); }
 
 // 3. HTML
-try { execFileSync('npx', ['--no-install', 'html-validate', join(pub, 'index.html'), join(pub, '404.html')], { stdio: 'pipe' }); console.log('html: clean'); }
+const examplePages = readdirSync(join(pub, 'examples'), { withFileTypes: true }).filter((d) => d.isDirectory()).map((d) => join(pub, 'examples', d.name, 'index.html'));
+try { execFileSync('npx', ['--no-install', 'html-validate', join(pub, 'index.html'), join(pub, '404.html'), ...examplePages], { stdio: 'pipe' }); console.log(`html: clean (${examplePages.length} example pages)`); }
 catch (e) { errors.push('html-validate:\n' + (e.stdout?.toString() || e.message)); }
 
 // 4. screenshots

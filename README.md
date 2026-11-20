@@ -23,6 +23,7 @@ One line starts it in any agent:
 | `public/install.sh` | Installer: copies the skill to `~/.claude/skills/runik` |
 | `public/install.txt`, `public/install.md` | The one line users paste and the Claude Code install steps |
 | `scripts/` | Page generator (drawings + template → index.html) and checks |
+| `scripts/examples.py` | The site's examples: chat drawing + Runik PDF for each (`npm run examples`, writes `public/examples/`; preview images need `pdftoppm`). `scripts/preview.mjs` renders drawings to PNG for a look |
 
 ## What gets installed
 

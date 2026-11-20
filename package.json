@@ -4,6 +4,7 @@
   "description": "Visual answer language for AI agents: landing page, one-line start, installer, the global runik skill and the Runik PDF renderer",
   "scripts": {
     "install-skill": "bash public/install.sh",
+    "examples": "python3 scripts/examples.py",
     "page": "python3 scripts/drawings.py && python3 scripts/page.py && python3 scripts/start.py",
     "check": "node scripts/check.mjs",
     "dev": "wrangler dev",

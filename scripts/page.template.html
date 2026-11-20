@@ -66,6 +66,18 @@ h2{font:700 clamp(26px,3.6vw,38px)/1.1 var(--display);letter-spacing:-.025em;mar
 .gal{display:grid;gap:20px}
 .gal figure{margin:0}
 .gal figcaption{font-size:13px;color:var(--muted);margin:10px 4px 0}
+.exs{display:grid;gap:28px}
+.ex{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:20px;align-items:start}
+.chat{display:grid;gap:12px;min-width:0}
+.ask{justify-self:end;max-width:80%;background:var(--tint);border-radius:14px 14px 4px 14px;padding:10px 14px;font-size:15px}
+.reply{display:grid;gap:10px;min-width:0}
+.reply p{margin:0;font-size:15px}
+.reply svg{width:100%;height:auto;display:block}
+.kind{font:600 11.5px/1 var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.pdf{display:grid;gap:8px;text-decoration:none;color:inherit}
+.pdf img{width:100%;height:auto;display:block;border:1px solid var(--line);border-radius:8px;box-shadow:0 6px 18px rgba(20,24,35,.08);background:#fff}
+.pdf span{font-size:13px;color:var(--muted)}
+.pdf b{font-weight:600;color:var(--fg)}
 .kur{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;max-width:820px}
 .steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
 .step{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:14px}
@@ -80,13 +92,16 @@ code.inline{font:13.5px var(--mono);background:var(--tint);padding:2px 6px;borde
 @media (max-width:820px){
   .vs{grid-template-columns:minmax(0,1fr)}
   .steps{grid-template-columns:minmax(0,1fr)}
+  .ex{grid-template-columns:minmax(0,1fr)}
+  .pdf{grid-template-columns:96px minmax(0,1fr);align-items:center}
   nav a:not(.btn){display:none}
   .wrap{padding:0 16px}
   .hero{padding:40px 0 20px}
   section{padding:40px 0}
   .panel{padding:12px}
   .notes li{grid-template-columns:64px minmax(0,1fr)}.notes time{display:none}
-  .panel{overflow-x:auto;-webkit-overflow-scrolling:touch}.panel>svg,.panel figure>svg,figure.panel>svg{min-width:640px}
+  .panel{overflow-x:auto;-webkit-overflow-scrolling:touch}.panel>svg,.panel figure>svg,figure.panel>svg,.reply svg{min-width:640px}
+  .reply{overflow-x:auto}
 }
 </style>
 </head>
@@ -136,11 +151,9 @@ code.inline{font:13.5px var(--mono);background:var(--tint);padding:2px 6px;borde
 
 <section id="examples" aria-labelledby="examples-h">
   <p class="eyebrow">Examples</p>
-  <h2 id="examples-h">Every answer is drawn in the same language</h2>
-  <div class="gal fig">
-    <figure class="panel">{{git}}<figcaption>Concept · two scenarios side by side</figcaption></figure>
-    <figure class="panel">{{sorgu}}<figcaption>Debugging · decision chain and scale</figcaption></figure>
-    <figure class="panel">{{pr}}<figcaption>Code review · row table</figcaption></figure>
+  <h2 id="examples-h">Ask normally. Get a drawing, or a PDF.</h2>
+  <div class="exs">
+{{examples}}
   </div>
 </section>
 

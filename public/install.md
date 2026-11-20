@@ -20,7 +20,7 @@ If this is an ephemeral cloud environment where `~/.claude` does not persist, th
 
 ## 2. Create the board
 
-Read `~/.claude/skills/runik/SKILL.md` and follow step 1 ("Find the board"). If `~/.claude/runik/config.json` already exists, keep its board. Otherwise publish `~/.claude/skills/runik/board.html` as a new artifact (title `Runik Board`, icon `board`, capabilities `{"db": {}}`) and write the link to `~/.claude/runik/config.json`.
+Read `~/.claude/skills/runik/SKILL.md` and follow step 1: run `bash ~/.claude/skills/runik/update.sh` and do what its `ACTION:` lines say. On a fresh install it asks you to create the board; if a board already exists, it is kept.
 
 ## 3. Write the first card
 

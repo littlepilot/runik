@@ -18,28 +18,48 @@ Everything Runik needs ships in this skill's folder (the folder holding this fil
 | `example_object.py`, `example_geo.json` | A full object drawing example and its map data. |
 | `board.html` | The Runik Board artifact page. |
 | `version.json` | Skill version and board version. |
+| `update.sh` | Self-update: checks, compares, installs and reports. Run at the start of every session. |
 
 ## Output language
 
 This skill is written in English, but **everything it produces is in the user's language**: card titles, topics, notes, every visible text inside drawings, chart and table labels, card summaries and items, and the one line in the chat. The user's language is the language of their messages (or the language they asked for); if unclear, follow the project's instructions or the language of the conversation so far. Number formats follow the same locale (rules §2). Only technical identifiers (field names like `type` or `data_json`, token names, code, file paths) stay as they are. The examples in this skill are in English only as examples; translate them, never copy them as-is.
 
-## 1. Find the board (once per session)
+## 1. Update and find the board (start of every session)
 
-Board state lives outside the skill folder so reinstalling never loses it: `~/.claude/runik/config.json`.
+Run the update script and act only on its output. Don't compare versions, download or install anything yourself; the script does all of that and checks the network at most once a day.
 
-```json
-{ "board_url": "https://claude.ai/...", "board_version": 4, "created": "2026-11-20" }
+```bash
+bash ~/.claude/skills/runik/update.sh
 ```
 
-- **File exists**: use `board_url`. If `board_version` is lower than `board` in `version.json`, republish `board.html` to the same `url` with the Artifact tool (pass no `capabilities`, so the existing database is kept) and update `board_version`.
-- **File missing**: publish `board.html` as a new artifact with the Artifact tool:
+(Use this skill's folder if it is installed somewhere else.) Lines starting with `runik:` are status; don't repeat them to the user. Lines starting with `ACTION:` are what you must do, in order. No `ACTION:` line means nothing to do. Typical output:
+
+```
+runik: 0.5.2, up to date
+runik: board https://claude.ai/...
+```
+
+The actions it can ask for:
+
+- **`re-read SKILL.md and rules.md`**: the skill was just updated; read both files again before going on.
+- **`republish … board.html to <url>`**: publish `board.html` to that `url` with the Artifact tool, passing no `capabilities` (the existing database is kept), then write the new `board_version` it names into `~/.claude/runik/config.json`.
+- **`create the board`** (no board yet): if project memory has a `runik.md` with a board link (ephemeral environments, see below), use that link instead. Otherwise publish `board.html` as a new artifact with the Artifact tool:
   - title: `Runik Board`
   - icon: `board`
   - capabilities: `{"db": {}}`
   - description: `Live side board where Runik answers are drawn.`
 
-  Write the returned link to `~/.claude/runik/config.json` (create the folder). Tell the user once, in one line and in their language, to keep the board open beside the chat, and offer once to pin it (Artifact `pin` only if they say yes).
-- **Ephemeral environment** (a cloud session where `~/.claude` does not persist): keep the board link in project memory as `runik.md` instead and read it from there.
+  Then write `~/.claude/runik/config.json` (the folder exists):
+
+  ```json
+  { "board_url": "<link>", "board_version": <board from version.json>, "created": "<today>" }
+  ```
+
+  Tell the user once, in one line and in their language, to keep the board open beside the chat, and offer once to pin it (Artifact `pin` only if they say yes).
+
+The board link for the rest of the session is the one in the `runik: board …` line (or the one you just created).
+
+- **Ephemeral environment** (a cloud session where `~/.claude` does not persist): also keep the board link in project memory as `runik.md` so the next session finds it.
 - **No Artifact or ArtifactData tool in this session**: Runik can't draw here. Answer normally, short, and don't mention it again this session.
 
 ## 2. Read the rules (once per session)
@@ -82,4 +102,4 @@ Write at most one line in the chat, in the user's language: `→ <"on the board"
 
 ## Updating
 
-Rerun the installer: `bash install.sh` from a checkout of the Runik repo, or `curl -fsSL https://runik.littleman.workers.dev/install.sh | bash`. The board link in `~/.claude/runik/config.json` is kept; the next session republishes the board if its version went up.
+Updates are automatic: `update.sh` (step 1) installs new versions at most a day after they are published. To update right away: `bash ~/.claude/skills/runik/update.sh --force`. The board link in `~/.claude/runik/config.json` is always kept.

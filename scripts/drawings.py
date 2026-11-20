@@ -68,10 +68,10 @@ for k,(n,d,lab) in enumerate(src):
     b.append(T(250,yy+21,n,13,600)); b.append(T(390,yy+21,d,11.5,400,'ink'))
     b.append(T(548,yy+21,lab,11.5,600,'muted'))
 b.append(R(24,384,712,52,'good',2,'good',0.12))
-b.append(T(40,408,'Update: rerun install.sh → board kept',13,600))
-b.append(T(40,425,'one command · same board',11.5))
+b.append(T(40,408,'Updates itself once a day → board kept',13,600))
+b.append(T(40,425,'no manual update · same board',11.5))
 out['nasil']=svgw(760,450,'Paste once, Runik works in every project',
- 'Copy the install prompt and paste it into Claude Code; Claude installs the global runik skill in ~/.claude/skills, creates the board beside the chat and writes the first card. In every project the skill opens with its rules inside, draws on the same board and writes in your language. To update, rerun install.sh; the board is kept.',b)
+ 'Copy the install prompt and paste it into Claude Code; Claude installs the global runik skill in ~/.claude/skills, creates the board beside the chat and writes the first card. In every project the skill opens with its rules inside, draws on the same board and writes in your language. The skill updates itself once a day; the board is kept.',b)
 
 # ===== G1: merge vs rebase
 b=[]

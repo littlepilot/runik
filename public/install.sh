@@ -9,7 +9,7 @@ set -euo pipefail
 
 CLAUDE_DIR="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
 SKILL_DIR="$CLAUDE_DIR/skills/runik"
-FILES="SKILL.md rules.md board.html version.json runik-lint.js purify.min.js runik_object.py example_object.py example_geo.json output-style.md"
+FILES="SKILL.md rules.md board.html version.json update.sh runik-lint.js purify.min.js runik_object.py example_object.py example_geo.json output-style.md"
 REPO="littlepilot/runik"
 SOURCES="https://raw.githubusercontent.com/$REPO/main/public https://runik.littleman.workers.dev"
 

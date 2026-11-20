@@ -1,0 +1,226 @@
+<title>Runik Board</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega@5.30.0/build/vega.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-lite@5.21.0/build/vega-lite.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vega-embed@6.26.0/build/vega-embed.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+<style>
+/* Layout: thin header on top, current card large in the middle, earlier cards in a grid below */
+:root{
+  --bg:#f3f4f7; --surface:#fff; --fg:#1b1f2a; --muted:#5f6779; --line:#dde1e8;
+  --accent:#2f5bd8; --accent-soft:#e6ecfc; --rune:#c2410c;
+  --ok:#15803d; --ok-soft:#e3f5ea; --warn:#b45309; --warn-soft:#fdf3d7; --err:#b91c1c; --err-soft:#fde4e4;
+  --ink:#1b1f2a; --edge:#8a93a5; --good:#15803d; --bad:#c81e1e; --focus:#2f5bd8; --k2:#5aa39a; --tint:#eef0f4;
+  --display:"Space Grotesk",system-ui,sans-serif; --body:"Inter",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#101319; --surface:#191d26; --fg:#e8ebf2; --muted:#98a1b3; --line:#2c3240;
+  --accent:#7d9cf5; --accent-soft:#1f2a47; --rune:#fb923c;
+  --ok:#4ade80; --ok-soft:#14301f; --warn:#fbbf24; --warn-soft:#332a0d; --err:#f87171; --err-soft:#3a1717; --ink:#e8ebf2; --edge:#636c80; --good:#4ade80; --bad:#f87171; --focus:#7d9cf5; --k2:#7cc6bc; --tint:#1d2230; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#101319; --surface:#191d26; --fg:#e8ebf2; --muted:#98a1b3; --line:#2c3240;
+  --accent:#7d9cf5; --accent-soft:#1f2a47; --rune:#fb923c;
+  --ok:#4ade80; --ok-soft:#14301f; --warn:#fbbf24; --warn-soft:#332a0d; --err:#f87171; --err-soft:#3a1717; --ink:#e8ebf2; --edge:#636c80; --good:#4ade80; --bad:#f87171; --focus:#7d9cf5; --k2:#7cc6bc; --tint:#1d2230; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--fg);font:15px/1.5 var(--body)}
+.wrap{padding-block:14px 32px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:18px;max-width:1100px;margin:0 auto}
+header{display:flex;align-items:center;gap:10px}
+.logo{font-family:var(--display);font-weight:700;font-size:18px;display:flex;align-items:center;gap:8px}
+.logo b{color:var(--rune);font-size:22px;line-height:1}
+.status{margin-left:auto;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.dot.on{background:var(--ok)} .dot.off{background:var(--err)}
+.stage{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px 22px;min-width:0;animation:enter .25s ease-out}
+@keyframes enter{from{transform:translateY(6px);opacity:.5}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.stage{animation:none}}
+.head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.head h1{font-family:var(--display);font-size:22px;margin:0;text-wrap:balance}
+.label{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.content{min-width:0;overflow-x:auto}
+.content .mermaid svg{max-width:100%;height:auto}
+.drawing{display:grid;gap:20px;max-width:1100px}
+.drawing svg{width:100%;height:auto;display:block}
+.drawing svg text{font-family:var(--body);font-variant-ligatures:none;font-feature-settings:"calt" 0}
+.writing{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px}
+.writing i{width:8px;height:8px;border-radius:50%;background:var(--focus);animation:pulse 1s ease-in-out infinite alternate}
+@keyframes pulse{from{opacity:.25}to{opacity:1}}
+.note{margin-top:12px;font-size:13px;color:var(--muted)}
+table{border-collapse:collapse;width:100%;font-size:14px;font-variant-numeric:tabular-nums}
+th{text-align:left;font-weight:600;color:var(--muted);font-size:12px;letter-spacing:.04em;text-transform:uppercase;border-bottom:2px solid var(--line);padding:8px 10px}
+td{border-bottom:1px solid var(--line);padding:8px 10px}
+td.num,th.num{text-align:right}
+.card{display:grid;gap:16px}
+.summary{font-size:20px;font-weight:600;display:flex;gap:12px;align-items:center}
+.badge{flex:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-size:18px;background:var(--accent-soft);color:var(--accent)}
+.ok .badge{background:var(--ok-soft);color:var(--ok)} .warn .badge{background:var(--warn-soft);color:var(--warn)} .error .badge{background:var(--err-soft);color:var(--err)}
+.numbers{display:flex;flex-wrap:wrap;gap:12px}
+.numbers div{border:1px solid var(--line);border-radius:10px;padding:10px 14px;min-width:110px}
+.numbers b{display:block;font-family:var(--display);font-size:26px;font-variant-numeric:tabular-nums}
+.numbers span{font-size:12px;color:var(--muted)}
+.items{margin:0;padding:0;list-style:none;display:grid;gap:6px}
+.items li{padding-left:18px;position:relative}
+.items li::before{content:"";position:absolute;left:4px;top:.6em;width:6px;height:6px;border-radius:2px;background:var(--accent)}
+.md{max-width:75ch}
+.md pre{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto;font:13px/1.5 var(--mono)}
+.md code{font-family:var(--mono);font-size:.9em}
+.error-box{color:var(--err);font-family:var(--mono);font-size:13px;white-space:pre-wrap}
+.history h2{font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin:0 0 8px;font-weight:600}
+.list{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px}
+.list button{all:unset;cursor:pointer;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 12px;display:grid;gap:2px;min-width:0}
+.list button:hover,.list button:focus-visible{border-color:var(--accent)}
+.list button[aria-current="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.list .b{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.list .m{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.empty{display:grid;place-items:center;text-align:center;padding:60px 20px;color:var(--muted)}
+.empty b{font-size:56px;color:var(--rune);font-family:var(--display);line-height:1}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="logo"><b>ᚱ</b> Runik</div>
+    <div class="status"><span class="dot" id="dot"></span><span id="statusText">connecting</span></div>
+  </header>
+  <div class="empty" id="empty"><div><b>ᚱ</b><p>Board ready. Whatever Claude shows will appear here.</p></div></div>
+  <section class="stage" id="stage" hidden></section>
+  <section class="history" id="history" hidden><h2>Earlier</h2><div class="list" id="list"></div></section>
+</div>
+
+<script>
+(() => {
+const isDark = () => document.documentElement.dataset.theme === 'dark' || (document.documentElement.dataset.theme !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
+if (window.mermaid) mermaid.initialize({ startOnLoad:false, theme: isDark() ? 'dark' : 'neutral', securityLevel:'strict', fontFamily:'Inter, sans-serif' });
+const TYPE_NAME = { drawing:'Drawing', diagram:'Diagram', chart:'Chart', table:'Table', card:'Card', markdown:'Note' };
+const ICON = { ok:'✓', warn:'!', error:'✕', info:'i' };
+const SVG_ATTR = ['font-size','font-weight','text-anchor','stroke-dasharray','fill-opacity','stroke-linecap','stroke-linejoin','role','aria-label'];
+let cards = [], selectedId = null, follow = true, lastNewest = null, lastSignature = '';
+const $ = (id) => document.getElementById(id);
+const el = (t, c, x) => { const e = document.createElement(t); if (c) e.className = c; if (x != null) e.textContent = x; return e; };
+const clock = (z) => { const d = new Date(z); return isNaN(d) ? '' : d.toLocaleTimeString(undefined, { hour:'2-digit', minute:'2-digit' }); };
+const num = (n) => n.toLocaleString(undefined);
+const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const setStatus = (s, t) => { $('dot').className = 'dot ' + s; $('statusText').textContent = t; };
+
+function dataOf(c) {
+  if (c.data_json != null) { try { return JSON.parse(c.data_json); } catch { return c.data_json; } }
+  return c.data;
+}
+
+async function render(card, box) {
+  const v = dataOf(card);
+  try {
+    switch (card.type) {
+      case 'drawing': {
+        const parts = Array.isArray(v) ? v : [v];
+        const d = el('div', 'drawing');
+        parts.forEach(p => {
+          const w = el('div');
+          w.innerHTML = window.DOMPurify ? DOMPurify.sanitize(String(p), { USE_PROFILES: { svg: true, svgFilters: true }, ADD_ATTR: SVG_ATTR }) : '';
+          if (!w.innerHTML) w.textContent = 'Drawing could not be shown';
+          d.append(w);
+        });
+        if (card.status === 'writing') { const y = el('div', 'writing'); y.append(el('i'), el('span', '', 'more coming')); d.append(y); }
+        box.append(d); break;
+      }
+      case 'diagram': {
+        if (!window.mermaid) throw new Error('Diagram library failed to load');
+        const { svg } = await mermaid.render('m' + String(card.id).replace(/\W/g, '') + Date.now(), String(v));
+        const d = el('div', 'mermaid'); d.innerHTML = svg; box.append(d); break;
+      }
+      case 'chart': {
+        if (!window.vegaEmbed) throw new Error('Chart library failed to load');
+        const spec = Object.assign({ width: 'container', autosize: { type: 'fit', contains: 'padding' } }, v);
+        const d = el('div'); d.style.width = '100%'; box.append(d);
+        await vegaEmbed(d, spec, { actions: false, theme: isDark() ? 'dark' : undefined,
+          config: { background: null, font: 'Inter, sans-serif', axisX: { labelAngle: 0 }, mark: { color: css('--accent') }, view: { stroke: null } } });
+        break;
+      }
+      case 'table': {
+        let cols, rows;
+        if (Array.isArray(v)) { cols = [...new Set(v.flatMap(Object.keys))]; rows = v.map(r => cols.map(c => r[c])); }
+        else { cols = v.columns || []; rows = v.rows || []; }
+        const isNum = cols.map((_, i) => rows.length > 0 && rows.every(r => r[i] == null || typeof r[i] === 'number'));
+        const t = el('table'), thead = el('thead'), th = el('tr');
+        cols.forEach((c, i) => th.append(el('th', isNum[i] ? 'num' : '', c)));
+        thead.append(th); t.append(thead);
+        const tb = el('tbody');
+        rows.forEach(r => { const tr = el('tr'); r.forEach((c, i) => tr.append(el('td', isNum[i] ? 'num' : '', c == null ? '' : typeof c === 'number' ? num(c) : String(c)))); tb.append(tr); });
+        t.append(tb); box.append(t); break;
+      }
+      case 'card': {
+        const k = typeof v === 'string' ? { summary: v } : v;
+        const d = el('div', 'card ' + (k.status || 'info'));
+        const o = el('div', 'summary'); o.append(el('span', 'badge', ICON[k.status] || ICON.info), el('span', '', k.summary || ''));
+        d.append(o);
+        if (k.numbers && Object.keys(k.numbers).length) {
+          const s = el('div', 'numbers');
+          for (const [a, b] of Object.entries(k.numbers)) { const c = el('div'); c.append(el('b', '', typeof b === 'number' ? num(b) : b), el('span', '', a)); s.append(c); }
+          d.append(s);
+        }
+        if (k.items && k.items.length) { const u = el('ul', 'items'); k.items.forEach(m => u.append(el('li', '', m))); d.append(u); }
+        box.append(d); break;
+      }
+      case 'markdown': {
+        const d = el('div', 'md');
+        d.innerHTML = window.marked && window.DOMPurify ? DOMPurify.sanitize(marked.parse(String(v))) : '';
+        if (!d.innerHTML) d.textContent = String(v);
+        box.append(d); break;
+      }
+      default: box.append(el('pre', 'error-box', typeof v === 'string' ? v : JSON.stringify(v, null, 2)));
+    }
+  } catch (e) { box.append(el('div', 'error-box', 'Could not render: ' + (e.message || e))); }
+}
+
+async function show(id) {
+  const card = cards.find(k => k.id === id); if (!card) return;
+  const isNew = id !== selectedId;
+  selectedId = id; lastSignature = JSON.stringify(card);
+  const s = $('stage'); s.hidden = false; $('empty').hidden = true;
+  s.replaceChildren(); if (isNew) { s.style.animation = 'none'; void s.offsetWidth; s.style.animation = ''; }
+  const head = el('div', 'head');
+  if (card.type !== 'drawing') head.append(el('h1', '', card.title || TYPE_NAME[card.type] || card.type));
+  head.append(el('span', 'label', [card.type === 'drawing' ? card.title : TYPE_NAME[card.type] || card.type, clock(card.time), card.topic].filter(Boolean).join(' · ')));
+  const content = el('div', 'content'); s.append(head, content);
+  await render(card, content);
+  if (card.note) s.append(el('div', 'note', card.note));
+  renderList();
+}
+
+function renderList() {
+  const l = $('list'); l.replaceChildren();
+  $('history').hidden = cards.length < 2;
+  cards.forEach(k => {
+    const b = el('button'); b.setAttribute('aria-current', String(k.id === selectedId));
+    b.append(el('span', 'b', k.title || TYPE_NAME[k.type] || k.type), el('span', 'm', [TYPE_NAME[k.type], clock(k.time), k.topic].filter(Boolean).join(' · ')));
+    b.onclick = () => { follow = k.id === cards[0].id; show(k.id); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+    l.append(b);
+  });
+}
+
+addEventListener('keydown', (e) => {
+  const i = cards.findIndex(k => k.id === selectedId); if (i < 0) return;
+  if (e.key === 'ArrowLeft' && i < cards.length - 1) { follow = false; show(cards[i + 1].id); }
+  if (e.key === 'ArrowRight' && i > 0) { follow = i - 1 === 0; show(cards[i - 1].id); }
+});
+
+(async () => {
+  const timer = setTimeout(() => setStatus('off', 'board data unreachable'), 10000);
+  const db = window.claude ? await window.claude.use('db') : null;
+  if (!db) { clearTimeout(timer); setStatus('off', 'visible after sign-in'); return; }
+  db.collection('cards').orderBy('time', 'desc').limit(100).onSnapshot((snap) => {
+    clearTimeout(timer); setStatus('on', 'live');
+    cards = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    if (!cards.length) { $('empty').hidden = false; $('stage').hidden = true; $('history').hidden = true; return; }
+    const newest = cards[0].id;
+    if (newest !== lastNewest) { lastNewest = newest; if (follow || !selectedId) return show(newest); }
+    const sel = cards.find(k => k.id === selectedId);
+    if (!sel) return show(newest);
+    if (JSON.stringify(sel) !== lastSignature) return show(selectedId);
+    renderList();
+  }, (e) => { clearTimeout(timer); setStatus('off', 'connection lost, reload the page'); });
+})();
+})();
+</script>

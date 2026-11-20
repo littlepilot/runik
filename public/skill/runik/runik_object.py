@@ -1,22 +1,22 @@
-# runik_nesne.py - Runik çizimlerinde GERÇEK NESNE çizmek için gölgeli SVG yardımcıları.
-# Visual Explainer'ın (vxart.py) çizim tekniğinden uyarlandı: ışık sol üstten, yumuşak gölge,
-# kontur dolgunun koyu tonu, grain doku. Fark: tüm id'ler çizime özgü önekli (pano aynı sayfada
-# birden çok SVG gösterir) ve çıktı bir Runik SVG'sinin içine gömülen <defs> + <g> parçasıdır.
+# runik_object.py - shaded SVG helpers for drawing REAL OBJECTS in Runik drawings.
+# Adapted from Visual Explainer's (vxart.py) drawing technique: light from the top left, soft shadow,
+# stroke in the dark shade of the fill, grain texture. Difference: every id carries a drawing-specific
+# prefix (the board shows many SVGs on one page) and the output is a <defs> + <g> fragment embedded in a Runik SVG.
 #
-#   from runik_nesne import Nesne, pol, blob, smooth, rrect, capsule
-#   N = Nesne("k20261118-kart")                      # önek: çizime özgü, kebab-case
-#   N.add(N.slab(40, 60, 300, 200, N.PCB))           # nesneyi çiz (kendi koordinatlarında)
-#   N.mark("cpu", 120, 140)                          # etiketlenecek noktayı kaydet
-#   defs, g = N.defs(), N.group(x=24, y=50, scale=0.7)   # Runik SVG'sine göm
-#   N.at("cpu")  -> (x, y) Runik tuvalindeki yeri (etiket ve kılavuz çizgi için)
+#   from runik_object import Obj, pol, blob, smooth, rrect, capsule
+#   N = Obj("k20261118-board")                       # prefix: unique to this drawing, kebab-case
+#   N.add(N.slab(40, 60, 300, 200, N.PCB))           # draw the object (in its own coordinates)
+#   N.mark("cpu", 120, 140)                          # remember a point to label
+#   defs, g = N.defs(), N.group(x=24, y=50, scale=0.7)   # embed into the Runik SVG
+#   N.at("cpu")  -> (x, y) position on the Runik canvas (for labels and leader lines)
 #
-# Renk: nesnenin kendi doğal rengi (devre kartı yeşil, dağ kahve-kar, kasa metal). Runik anlam
-# renkleri (--tamam/--dikkat/--risk/--odak) nesnenin gövdesine girmez; yalnız üstüne konan işarette.
+# Color: the object's own natural color (circuit board green, mountain brown and snow, case metal). Runik meaning
+# colors (--good/--warn/--bad/--focus) never paint the object's body; only the marks placed on top of it.
 import math, random
 
 NL = chr(10)
 
-# Doğal malzeme paletleri: (açık, orta, koyu). Koyu = kontur ve gölgeli yüz.
+# Natural material palettes: (light, mid, dark). Dark = stroke and shaded face.
 PCB = ("#5e9f7a", "#3c7d58", "#24553a")
 METAL = ("#f7f8fa", "#d3d8de", "#8d96a2")
 DARK = ("#59606b", "#353a42", "#1b1e22")
@@ -69,8 +69,8 @@ def capsule(L, W):
     return 'M%.1f,%.1f h%.1f a%.1f,%.1f 0 0 1 0,%.1f h%.1f a%.1f,%.1f 0 0 1 0,%.1f Z' % (r - L / 2.0, -r, L - W, r, r, W, W - L, r, r, -W)
 
 
-class Nesne:
-    '''Bir gerçek nesne çizimi. Koordinatlar nesnenin kendi biriminde; group() ile Runik tuvaline yerleşir.'''
+class Obj:
+    '''One real-object drawing. Coordinates are in the object's own units; group() places it on the Runik canvas.'''
     PCB, METAL, DARK, PAPER, ROCK, STONE, GOLD, WOOD, GLASS, SKIN, LEAF, WATER, SAND = PCB, METAL, DARK, PAPER, ROCK, STONE, GOLD, WOOD, GLASS, SKIN, LEAF, WATER, SAND
 
     def __init__(self, prefix):
@@ -88,7 +88,7 @@ class Nesne:
         return 'url(#%s)' % self.ids[key]
 
     def blur(self, n):
-        '''n: 2, 4, 8 ya da 14. filter="%s" % N.blur(4)'''
+        '''n: 2, 4, 8 or 14. filter="%s" % N.blur(4)'''
         return self._def(('b', n), '<filter id="@ID" x="-30%%" y="-30%%" width="160%%" height="160%%"><feGaussianBlur stdDeviation="%d"/></filter>' % n)
 
     def radial(self, light, mid, dark, fx=0.36, fy=0.30, r=0.78):
@@ -109,7 +109,7 @@ class Nesne:
     def mark(self, name, x, y):
         self.marks[name] = (x, y)
 
-    # ---- yapı taşları (her biri SVG metni döndürür)
+    # ---- building blocks (each returns SVG text)
     def shadow(self, d, dx=4, dy=7, blur=4, opacity=0.25, w=0):
         paint = ('fill="none" stroke="%s" stroke-width="%g" stroke-linecap="round"' % (SHADOW, w)) if w else 'fill="%s"' % SHADOW
         return '<path d="%s" %s opacity="%g" filter="%s" transform="translate(%g %g)"/>' % (d, paint, opacity, self.blur(blur), dx, dy)
@@ -126,7 +126,7 @@ class Nesne:
         return o
 
     def slab(self, x, y, w, h, cols=METAL, r=8, depth=8, shadow=0.24):
-        '''Üstten hafif bakılan katı blok: kart, çip, levha, kasa, pil.'''
+        '''Solid block seen slightly from above: board, chip, plate, case, battery.'''
         top, side = rrect(x, y, w, h, r), rrect(x, y + depth, w, h, r)
         o = '<path d="%s" fill="%s" opacity="%g" filter="%s" transform="translate(5 9)"/>' % (side, SHADOW, shadow, self.blur(8)) if shadow else ''
         o += '<path d="%s" fill="%s"/>' % (side, cols[2]) if depth else ''
@@ -134,7 +134,7 @@ class Nesne:
         return o + '<path d="M%.1f,%.1f h%.1f" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity="0.65"/>' % (x + r, y + 3, w - 2 * r)
 
     def layers(self, x, y, w, rows, depth=70, shadow=0.24):
-        '''Katman kesiti (kart, pil, deri, duvar, zemin). rows=[(kalınlık, palet), ...] yukarıdan aşağı.'''
+        '''Layered cross-section (board, battery, skin, wall, ground). rows=[(thickness, palette), ...] top to bottom.'''
         dx, dy, H, c = depth * 0.8, depth * 0.5, sum(r[0] for r in rows), rows[0][1]
         o = '<path d="M%.1f,%.1f l%.1f,%.1f h%.1f v%.1f l%.1f,%.1f h%.1f Z" fill="%s" opacity="%g" filter="%s" transform="translate(6 10)"/>' % (
             x, y, dx, -dy, w, H, -dx, dy, -w, SHADOW, shadow, self.blur(8)) if shadow else ''
@@ -146,12 +146,12 @@ class Nesne:
         return o
 
     def tube(self, d, dark, light, w=14, inner=8):
-        '''Boru, kablo, damar, yol.'''
+        '''Pipe, cable, vessel, road.'''
         a = 'fill="none" stroke-linecap="round" stroke-linejoin="round"'
         return '<path d="%s" %s stroke="%s" stroke-width="%g"/><path d="%s" %s stroke="%s" stroke-width="%g"/>' % (d, a, dark, w, d, a, light, inner)
 
     def grain(self, clip_d, opacity=0.4):
-        '''Büyük düz dolgunun plastik görünümünü alır; clip_d = gövdenin yolu.'''
+        '''Takes the plastic look off a large flat fill; clip_d = the body's path.'''
         f = self._def(('g',), '<filter id="@ID" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="n"/>'
                       '<feColorMatrix in="n" type="matrix" values="0 0 0 0 0.35  0 0 0 0 0.22  0 0 0 0 0.10  0 0 0 0.55 -0.12"/></filter>')
         return '<rect x="-2000" y="-2000" width="6000" height="6000" fill="none" filter="%s" opacity="%g" clip-path="%s"/>' % (f, opacity, self.clip(clip_d))
@@ -160,7 +160,7 @@ class Nesne:
         return self.slab(x, y, w, h, DARK, r=3, depth=3, shadow=0.15)
 
     def peak(self, x, y, H, wf=1.0, snow=True):
-        '''Dağ: (x, y) taban ortası, H yükseklik. Girintili sırt + ikincil tepe + gölgeli yüz + kar.'''
+        '''Mountain: (x, y) base center, H height. Jagged ridge + secondary summit + shaded face + snow.'''
         pts = [(-0.68, 0), (-0.4, -0.5), (-0.3, -0.42), (-0.1, -0.82), (0, -1), (0.17, -0.66), (0.27, -0.74), (0.68, 0)]
         P = lambda ps: 'M' + ' L'.join('%.1f,%.1f' % (x + a * H * wf, y + b * H) for a, b in ps) + 'Z'
         body = P(pts)
@@ -177,7 +177,7 @@ class Nesne:
         o += '<path d="%s" fill="%s"/>' % (rrect(x + 8 * s, y + 8 * s, w - 16 * s, h - 18 * s, 4), self.linear("#f5f8fc", "#dfe7f1"))
         return o + self.slab(x - 18 * s, y + h + 2, w + 36 * s, 14 * s, METAL, r=5, depth=4, shadow=0.18)
 
-    # ---- Runik SVG'sine yerleştirme
+    # ---- placing into a Runik SVG
     def defs(self):
         return ''.join(self._defs)
 
@@ -186,7 +186,7 @@ class Nesne:
         return '<g transform="translate(%g %g) scale(%g)">%s</g>' % (x, y, scale, ''.join(self.body))
 
     def at(self, name):
-        '''Kaydedilen noktanın Runik tuvalindeki yeri (group() çağrısından sonra).'''
+        '''Position of a marked point on the Runik canvas (after group() is called).'''
         x, y = self.marks[name]
         tx, ty, s = self._tf
         return (tx + x * s, ty + y * s)

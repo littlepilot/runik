@@ -27,7 +27,7 @@ def dot(cx,cy,r,c): return f'<circle cx="{cx}" cy="{cy}" r="{r}" fill="var(--{c}
 def P(d,c='edge',sw=1.5,dash=None,fill='none'):
     dd=f' stroke-dasharray="{dash}"' if dash else ''
     return f'<path d="{d}" stroke="var(--{c})" stroke-width="{sw}" fill="{fill}" stroke-linecap="round" stroke-linejoin="round"{dd}/>'
-def check(x,y,c='tamam'): return P(f'M{x} {y} l4 4 l8 -9',c,2)
-def cross(x,y,c='risk'): return P(f'M{x} {y} l9 9 M{x+9} {y} l-9 9',c,2)
+def check(x,y,c='good'): return P(f'M{x} {y} l4 4 l8 -9',c,2)
+def cross(x,y,c='bad'): return P(f'M{x} {y} l9 9 M{x+9} {y} l-9 9',c,2)
 def svgw(w,h,title,desc,body,id=''):
     return f'<svg viewBox="0 0 {w} {h}" width="100%" font-size="13" role="img" aria-label="{title}"><title>{title}</title><desc>{desc}</desc>{T(24,30,title,15,600)}{"".join(body)}</svg>'

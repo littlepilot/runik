@@ -1,49 +1,81 @@
 ---
 name: runik
-description: Runik görsel iletişim. Bu projede her cevap, açıklama ve sonuç uzun metin yerine Runik Pano'ya kurallı çizim olarak yazılır. Her thread'in başında ve her cevaptan önce kullan.
+description: Runik visual answers. Explanations, comparisons, plans, architecture, processes and results are drawn as rule-based SVG drawings (or charts, tables, cards) on the Runik Board, a live artifact kept open beside the chat, instead of long text. Use before every reply that explains something, compares options, reports results or answers a question a picture could carry. Skip it for one-line confirmations and for replies that are only code, commands or file paths.
 ---
 
-# Runik (yükleyici)
+# Runik
 
-Bu skill ince bir yükleyicidir. Çizim kuralları her thread'de en güncel halden okunur; bu dosyanın sonundaki kopya yalnız son çaredir.
+Runik replaces long text with drawings. Answers go to the **Runik Board** (one live artifact shared by all projects) as cards; the chat gets at most one line pointing at the card.
 
-## 1. Güncel kuralları çek (thread başına bir kez)
+Everything Runik needs ships in this skill's folder (the folder holding this file, normally `~/.claude/skills/runik`):
 
-```bash
-mkdir -p /tmp/runik && cd /tmp/runik
-for u in "https://raw.githubusercontent.com/littlepilot/runik/main/public" "https://runik.littleman.workers.dev"; do
-  curl -fsSL "$u/skill/surum.json" -o surum.json \
-  && curl -fsSL "$u/skill/runik-cizim/SKILL.md" -o SKILL.md \
-  && curl -fsSL "$u/skill/runik-cizim/runik-lint.js" -o runik-lint.js \
-  && curl -fsSL "$u/skill/runik-cizim/purify.min.js" -o purify.min.js \
-  && curl -fsSL "$u/skill/runik-cizim/runik_nesne.py" -o runik_nesne.py \
-  && echo "kaynak: $u" && break
-done
+| File | What |
+|---|---|
+| `rules.md` | Drawing rules: canvas, type, color, components, patterns. Read before drawing. |
+| `runik-lint.js` | Checks drawings before delivery (needs Playwright). |
+| `purify.min.js` | DOMPurify, used by the lint exactly as the board uses it. |
+| `runik_object.py` | Helpers for shaded, natural-color drawings of real objects (§4b of the rules). |
+| `example_object.py`, `example_geo.json` | A full object drawing example and its map data. |
+| `board.html` | The Runik Board artifact page. |
+| `version.json` | Skill version and board version. |
+
+## 1. Find the board (once per session)
+
+Board state lives outside the skill folder so reinstalling never loses it: `~/.claude/runik/config.json`.
+
+```json
+{ "board_url": "https://claude.ai/...", "board_version": 4, "created": "2026-11-20" }
 ```
 
-Sonra `/tmp/runik/SKILL.md` dosyasını baştan sona oku ve uygula; denetim betiği `/tmp/runik/runik-lint.js`. Gerçek nesne çizimlerinde (devre kartı, dağ, kasa) yardımcı kütüphane `/tmp/runik/runik_nesne.py`. İki kaynak da açılmazsa bu dosyanın sonundaki "Yedek kopya"yı uygula ve kullanıcıya bir kez, tek satırla, ağ ayarlarında bu alan adlarına izin verilmesi gerektiğini söyle.
+- **File exists**: use `board_url`. If `board_version` is lower than `board` in `version.json`, republish `board.html` to the same `url` with the Artifact tool (pass no `capabilities`, so the existing database is kept) and update `board_version`.
+- **File missing**: publish `board.html` as a new artifact with the Artifact tool:
+  - title: `Runik Board`
+  - icon: `board`
+  - capabilities: `{"db": {}}`
+  - description: `Live side board where Runik answers are drawn.`
 
-## 2. Cevabı panoya yaz
+  Write the returned link to `~/.claude/runik/config.json` (create the folder). Tell the user once, in one line, to keep the board open beside the chat, and offer once to pin it (Artifact `pin` only if they say yes).
+- **Ephemeral environment** (a cloud session where `~/.claude` does not persist): keep the board link in project memory as `runik.md` instead and read it from there.
+- **No Artifact or ArtifactData tool in this session**: Runik can't draw here. Answer normally, short, and don't mention it again this session.
 
-Pano bağlantısı proje hafızasındaki `runik.md` dosyasındadır. Yoksa kullanıcıya https://runik.littleman.workers.dev adresindeki kurulum prompt'unu önerip dur.
+## 2. Read the rules (once per session)
 
-Cevapları, açıklamaları ve sonuçları panoya kart olarak yaz: ArtifactData ile `kartlar` koleksiyonuna `set`.
-- doc_id: `k-YYYYMMDD-HHMMSS-kisa-ad`
-- tur: `cizim` (açıklamalar için varsayılan) | `grafik` | `tablo` | `kart` | `markdown`
-- baslik: kısa, cevabın kendisi
-- konu: thread başlığı
-- zaman: ISO, UTC
-- veri_json: veri JSON string olarak
-  - cizim: güncel kurallara uygun SVG dizisi `["<svg…>", …]`. Uzun cevapta önce ilk SVG ile `set`, sonra parçaları `update` ile ekle; bitene kadar `durum: "yaziliyor"` ver.
-  - grafik: Vega-Lite spec
-  - tablo: `{"sutunlar":[],"satirlar":[[]]}`
-  - kart: `{"ozet","durum":"ok|uyari|hata|bilgi","maddeler":[],"sayilar":{}}`
-- not: isteğe bağlı
+Read `rules.md` from start to end and apply it to every drawing. The hard rule (§0): text is the last resort.
 
-Renkler yalnız pano tokenlarıyla: `var(--ink)`, `var(--muted)`, `var(--edge)`, `var(--line)`, `var(--tamam)`, `var(--dikkat)`, `var(--risk)`, `var(--odak)`, `var(--k2)`, `var(--tint)`, `var(--surface)`. Gerçek nesnenin gövdesi bu kuralın dışındadır: doğal renginde, gölgeli çizilir (güncel kurallar §4b); anlam renkleri yalnız üstündeki işarettedir.
+## 3. Write the answer to the board
 
-Thread'e en fazla tek satır yaz: `→ panoda: <başlık>`. Kod, bağlantı ve dosya yolu gibi birebir gerekenler thread'de kalabilir. Karar gerekiyorsa karar kartını kullan.
+Write answers, explanations and results as cards: ArtifactData `set` on the board's `cards` collection.
 
-## 3. Pano güncelliği
+- doc_id: `k-YYYYMMDD-HHMMSS-short-name`
+- `type`: `drawing` (default for explanations) | `chart` | `table` | `card` | `diagram` | `markdown`
+- `title`: short, the answer itself
+- `topic`: the project or thread name
+- `time`: ISO, UTC
+- `data_json`: the data as a JSON string
+  - drawing: an array of SVG strings following the rules, `["<svg…>", …]`. For a long answer, `set` the first SVG, then add parts with `update`; keep `status: "writing"` until done, then remove it.
+  - chart: a Vega-Lite spec
+  - table: `{"columns": [], "rows": [[]]}`
+  - card: `{"summary": "", "status": "ok|warn|error|info", "items": [], "numbers": {}}`
+  - diagram: Mermaid source (only when a hand-drawn SVG would add nothing)
+  - markdown: a short note
+- `note`: optional
 
-`/tmp/runik/surum.json` içindeki `pano` sürümü hafızadakinden büyükse `<kaynak>/pano/pano.html` dosyasını indir, aynı pano bağlantısına yeniden yayınla (capabilities verme, mevcut db korunur) ve hafızadaki pano sürümünü güncelle.
+Visible text on the board is in the user's language.
+
+Colors only through board tokens: `var(--ink)`, `var(--muted)`, `var(--edge)`, `var(--line)`, `var(--good)`, `var(--warn)`, `var(--bad)`, `var(--focus)`, `var(--k2)`, `var(--tint)`, `var(--surface)`. A real object's body is the exception: it is drawn in natural colors with shading (rules §4b); meaning colors only go on the marks on top of it.
+
+## 4. Check before delivery
+
+```bash
+node <skill folder>/runik-lint.js card.json
+```
+
+`card.json` is the card document (with `data_json`) or a plain array of SVG strings. Fix everything it reports. It needs Playwright (local or global, `npm i -g playwright && npx playwright install chromium`); if it is missing, check the drawing by eye and tell the user once that the lint could not run.
+
+## 5. The chat
+
+Write at most one line in the chat: `→ on the board: <title>`. Things that must be exact (code, commands, links, file paths) stay in the chat. If a decision is needed, ask the question in the chat in one line and show the options on the board.
+
+## Updating
+
+Rerun the installer: `bash install.sh` from a checkout of the Runik repo, or `curl -fsSL https://runik.littleman.workers.dev/install.sh | bash`. The board link in `~/.claude/runik/config.json` is kept; the next session republishes the board if its version went up.

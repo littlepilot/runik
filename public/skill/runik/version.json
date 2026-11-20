@@ -1,0 +1,32 @@
+{
+  "version": "0.5.0",
+  "date": "2026-11-20",
+  "board": 4,
+  "notes": [
+    {
+      "version": "0.5.0",
+      "date": "2026-11-20",
+      "summary": "English everywhere and a single global skill (~/.claude/skills/runik): rules, tools and board ship inside the skill; one board for all projects"
+    },
+    {
+      "version": "0.4.0",
+      "date": "2026-11-19",
+      "summary": "Object drawing: real objects shaded and in natural colors (Visual Explainer technique, runik_object.py); the board keeps shadow filters"
+    },
+    {
+      "version": "0.3.0",
+      "date": "2026-11-11",
+      "summary": "Landing page and always-current install"
+    },
+    {
+      "version": "0.2.0",
+      "date": "2026-11-11",
+      "summary": "Expert review: bars from 0, one-meaning marks, map rules, runik-lint"
+    },
+    {
+      "version": "0.1.0",
+      "date": "2026-11-11",
+      "summary": "First rule set: 760 grid, five type sizes, color roles, eight patterns"
+    }
+  ]
+}

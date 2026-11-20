@@ -1,33 +1,40 @@
 # ᚱ Runik
 
-Claude Code için görsel cevap dili. Cevaplar uzun metin yerine kurallı çizimlerle, yan ekrandaki bir panoda gösterilir.
+A visual answer language for Claude Code. Instead of long text, answers are drawn as rule-based visuals on a live board beside the chat.
+
+Runik installs once as a **global Claude Code skill** (`~/.claude/skills/runik`) and works in every project.
 
 - Site: https://runik.littleman.workers.dev
-- Kurulum: sitedeki prompt'u kopyalayıp bir Claude Code projesine yapıştır.
+- Install: `bash public/install.sh` from this repo, or `curl -fsSL https://runik.littleman.workers.dev/install.sh | bash`, or paste the prompt from the site into Claude Code.
 
-## Yapı
+## Layout
 
-| Yol | Ne |
+| Path | What |
 |---|---|
-| `public/` | Cloudflare Workers'a olduğu gibi giden statik site |
-| `public/skill/runik-cizim/` | Çizim kuralları: **tek kaynak** (SKILL.md, runik-lint.js) |
-| `public/skill/runik/SKILL.md` | Projelere kurulan ince yükleyici skill |
-| `public/skill/surum.json` | Sürüm, pano sürümü, sürüm notları |
-| `public/pano/pano.html` | Runik Pano artifact şablonu |
-| `public/kur.txt`, `public/kurulum.md` | Yapıştırılan prompt ve Claude'un izlediği adımlar |
-| `scripts/` | Sayfa üretici (çizimler + şablon → index.html) ve kontrol |
+| `public/` | Static site, deployed as-is to Cloudflare Workers |
+| `public/skill/runik/` | The skill, **single source**: `SKILL.md`, `rules.md` (drawing rules), `runik-lint.js`, `runik_object.py`, `board.html`, `version.json` |
+| `public/skill/runik/output-style.md` | Optional output style, installed to `~/.claude/output-styles/runik.md` |
+| `public/install.sh` | Installer: copies the skill to `~/.claude/skills/runik` |
+| `public/install.txt`, `public/install.md` | The prompt users paste and the steps Claude follows |
+| `scripts/` | Page generator (drawings + template → index.html) and checks |
 
-## Kural güncellemek
+## What gets installed
 
-1. `public/skill/runik-cizim/SKILL.md` dosyasını düzenle.
-2. `public/skill/surum.json` içinde `surum`u artır, `notlar`a bir satır ekle. Pano değiştiyse `pano`yu artır.
+- `~/.claude/skills/runik/`: the skill. Reinstalling overwrites it.
+- `~/.claude/output-styles/runik.md`: optional output style (`/output-style`).
+- `~/.claude/runik/config.json`: the board link, written by Claude the first time the skill runs. Reinstalling keeps it, so every project draws on the same board.
+
+## Changing the rules
+
+1. Edit `public/skill/runik/rules.md` (or `SKILL.md`).
+2. Bump `version` in `public/skill/runik/version.json` and add a line to `notes`. If the board changed, bump `board`.
 3. `npm run sayfa && npm run kontrol`
-4. `git push` → kontrol + yayın. Kurulu her proje bir sonraki thread'de yeni kuralları çeker.
+4. `git push` → checks + deploy. Rerun `bash public/install.sh` to update the global skill; the next session republishes the board if `board` went up.
 
-## Yerel
+## Local
 
     npm ci
     npm run yerel      # wrangler dev
-    npm run yayinla    # wrangler deploy (elle)
+    npm run yayinla    # wrangler deploy (manual)
 
-Otomatik yayın için repo sırlarına `CLOUDFLARE_API_TOKEN` (Workers Scripts: Edit) ve `CLOUDFLARE_ACCOUNT_ID` ekle; yoksa CI yalnız kontrol eder.
+For automatic deploys add `CLOUDFLARE_API_TOKEN` (Workers Scripts: Edit) and `CLOUDFLARE_ACCOUNT_ID` to the repo secrets; without them CI only runs the checks.

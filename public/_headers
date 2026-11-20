@@ -9,9 +9,13 @@
   Cache-Control: public, max-age=300
   Access-Control-Allow-Origin: *
 
-/kurulum.md
+/install.md
   Content-Type: text/markdown; charset=utf-8
   Cache-Control: public, max-age=300
 
-/kur.txt
+/install.txt
+  Cache-Control: public, max-age=300
+
+/install.sh
+  Content-Type: text/plain; charset=utf-8
   Cache-Control: public, max-age=300

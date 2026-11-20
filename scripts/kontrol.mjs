@@ -11,7 +11,7 @@ const hatalar = [];
 const html = readFileSync(join(pub, 'index.html'), 'utf8');
 
 // 1. yer tutucu
-for (const f of ['index.html', 'kur.txt', 'kurulum.md', 'skill/runik/SKILL.md'])
+for (const f of ['index.html', 'install.txt', 'install.md', 'install.sh', 'skill/runik/SKILL.md'])
   if (/__(SITE|GH)__/.test(readFileSync(join(pub, f), 'utf8'))) hatalar.push(`${f}: __SITE__/__GH__ doldurulmamış`);
 
 // 2. çizim kuralları
@@ -19,7 +19,7 @@ const svgs = html.match(/<svg viewBox="0 0 760[\s\S]*?<\/svg>/g) || [];
 mkdirSync(join(kok, 'ekran'), { recursive: true });
 writeFileSync(join(kok, 'ekran', 'svgs.json'), JSON.stringify(svgs));
 try {
-  console.log(execFileSync('node', [join(pub, 'skill/runik-cizim/runik-lint.js'), join(kok, 'ekran/svgs.json')], { encoding: 'utf8' }).trim());
+  console.log(execFileSync('node', [join(pub, 'skill/runik/runik-lint.js'), join(kok, 'ekran/svgs.json')], { encoding: 'utf8' }).trim());
 } catch (e) { hatalar.push('runik-lint:\n' + (e.stdout || e.message)); }
 
 // 3. HTML

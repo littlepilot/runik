@@ -144,83 +144,9 @@ EX.append(dict(
         dict(type='card', title='In short', data=dict(summary='Give the vents a gap and it stays at full speed', status='ok',
                                                      items=['Rubber feet lift it ~3 mm', 'Blankets and pillows close that gap', 'Hot CPUs slow down to protect themselves']))])))
 
-# =========================================================== 2. noise-cancelling headphones (process panels)
-
-
-def wave(x, y, w, amp, phase=0, c='ink', sw=2, dash=None, cycles=2.5):
-    pts = ['%.1f %.1f' % (x + i * w / 60, y - amp * math.sin(phase + i / 60 * cycles * 2 * math.pi)) for i in range(61)]
-    return P('M' + ' L'.join(pts), c, sw, dash)
-
-
-def headphone(prefix):
-    N = Obj(prefix)
-    N.add(N.tube('M20,70 C20,0 120,0 120,70', N.DARK[2], N.DARK[1], 12, 6))
-    N.add(N.ball(20, 82, 22, 28, cols=N.DARK, shadow=0.2, gloss=0.35))
-    N.add(N.ball(120, 82, 22, 28, cols=N.DARK, shadow=0.2, gloss=0.35))
-    N.add(N.ball(120, 98, 4, cols=N.METAL, shadow=0, gloss=0))
-    N.mark('mic', 124, 102)
-    return N
-
-
-def anc_main():
-    title = 'Headphones cancel noise by adding its mirror'
-    b, defs = [], ''
-    heads = ['1 · Noise arrives', '2 · Mirror is added', '3 · They cancel']
-    for k, h in enumerate(heads):
-        x = 24 + k * 244
-        b.append(R(x, 52, 224, 190, 'edge', 1.25))
-        b.append(T(x + 16, 76, h, 13, 600))
-        if k < 2:
-            b.append(chev(x + 234, 147))
-    b.append(wave(40, 150, 192, 34, 0, 'ink'))
-    b.append(T(40, 222, 'engine hum', 11.5, 400, 'muted'))
-    b.append(wave(284, 150, 192, 34, 0, 'ink', 1.5))
-    b.append(wave(284, 150, 192, 34, math.pi, 'focus', 2.5))
-    N = headphone('k20261120-anc-hp')
-    b.append(N.group(438, 58, 0.28))
-    defs += N.defs()
-    b.append(T(284, 222, 'mic hears · speaker flips', 11.5, 400, 'muted'))
-    b.append(L(544, 150, 720, 150, 'good', 2.5))
-    b.append(wave(544, 150, 176, 34, 0, 'line', 1, '3 3'))
-    b.append(check(544, 196))
-    b.append(T(562, 205, 'near silence', 11.5, 600, 'good'))
-    b.append(T(544, 222, 'peak + valley = 0', 11.5, 400, 'muted'))
-    b.append(legend(24, 268, [('arrow', 'ink', 'noise'), ('arrow', 'focus', 'mirror wave'), ('arrow', 'good', 'what you hear')]))
-    return sv(280, title, 'Three panels. 1: a noise wave (engine hum) arrives. 2: the headphone microphone hears it and the speaker plays the same wave flipped upside down. 3: peaks meet valleys and add up to nearly zero, near silence.', b, defs)
-
-
-def anc_where():
-    title = 'Steady hums vanish, sudden sounds slip through'
-    b = [T(24, 62, 'SOUND', 11.5, 600, 'muted'), T(300, 62, 'SHAPE', 11.5, 600, 'muted'), T(560, 62, 'HOW MUCH IS CANCELLED', 11.5, 600, 'muted')]
-    rows = [('Plane engine', 'low, steady', 5, 'good', 'most'), ('Office chatter', 'mid, changing', 3, 'warn', 'some'), ('Door slam', 'sudden', 1, 'bad', 'little')]
-    for i, (n, d, r, c, word) in enumerate(rows):
-        y = 100 + i * 64
-        b += [dot(30, y - 4, 6, c), T(46, y, n, 13, 600), T(46, y + 18, d, 11.5, 400, 'muted')]
-        if i == 0:
-            b.append(wave(300, y + 2, 200, 14, 0, 'ink', 1.5, cycles=3))
-        elif i == 1:
-            b.append(P('M300 %d ' % (y + 2) + ' '.join('L%d %d' % (300 + j * 10, y + 2 - (12 if j % 3 == 0 else -8 if j % 2 else 4)) for j in range(1, 21)), 'ink', 1.5))
-        else:
-            b.append(P('M300 %d H380 L386 %d L392 %d L398 %d H500' % (y + 2, y - 20, y + 22, y + 2), 'ink', 1.5))
-        b.append(rating(566, y - 4, r, c))
-        b.append(T(640, y, word, 11.5, 600, c))
-        if i < 2:
-            b.append(L(24, y + 34, 736, y + 34))
-    b.append(R(24, 300, 712, 50, 'focus', 2, 'focus', 0.12))
-    b += [T(40, 322, 'Best on planes, trains and fans', 13, 600), T(40, 340, 'the mirror needs a sound it can predict', 11.5)]
-    b.append(legend(24, 376, [('dot', 'good', 'cancelled well'), ('dot', 'warn', 'partly'), ('dot', 'bad', 'barely')]))
-    return sv(388, title, 'Plane engine: low and steady, cancelled the most (5 of 5). Office chatter: changing, partly (3 of 5). Door slam: sudden, barely (1 of 5). The mirror wave needs a predictable sound.', b)
-
-
-EX.append(dict(
-    slug='headphones', kind='Process panels', question='How do noise-cancelling headphones actually work?',
-    line='They play the noise back upside down, so the two waves cancel out.',
-    chat=[anc_main()],
-    pdf=dict(title='Headphones cancel noise by adding its mirror', subtitle='How active noise cancelling works', cards=[
-        dict(type='drawing', title='', data=[anc_main()]),
-        dict(type='drawing', title='', data=[anc_where()]),
-        dict(type='table', title='Inside the cup', data=dict(columns=['Part', 'Job'], rows=[
-            ['Outer microphone', 'hears the noise before your ear does'], ['Chip', 'flips the wave in about a millisecond'], ['Speaker', 'plays music plus the mirror wave']]))])))
+# =========================================================== 2. noise-cancelling headphones (researched, multi-page)
+import ex_headphones
+EX.append(ex_headphones.example())
 
 # =========================================================== 3. cell division: mitosis and meiosis (researched, multi-page)
 import ex_cell

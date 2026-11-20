@@ -293,32 +293,71 @@ def history():
     for yr in (1930, 1940, 1950, 1960, 1970, 1980, 1990, 2000):
         b.append(T(X(yr), 256, str(yr), 11.5, 400, 'muted', 'middle' if yr < 2000 else 'end'))
     b.append(L(X(1930), 240, X(2000), 240, 'line', 1))
-    return svg(268, title, 'History: Paul Lueg filed a patent for cancelling sound with sound in 1934 (granted in the US in 1936) but could not build it; Harry Olson and Everett May built an electronic sound absorber in 1953; Amar Bose had the idea for headphones on a noisy flight in 1978; Dick Rutan and Jeana Yeager flew non-stop around the world in 1986 wearing ANC headsets; the first commercial headset, for pilots, went on sale in 1989.', b)
+    return svg(268, title, 'History: Paul Lueg filed a patent for cancelling sound with sound in 1934 (granted in the US in 1936) but could not build it; Harry Olson and his colleague May built an electronic sound absorber in 1953; Amar Bose had the idea for headphones on a noisy flight in 1978; Dick Rutan and Jeana Yeager flew non-stop around the world in 1986 wearing ANC headsets; the first commercial headset, for pilots, went on sale in 1989.', b)
 
 
 # ---------------------------------------------------------------- the example
 PROMPT = ('How do noise-cancelling headphones work? Show what is inside one, how the cancelling works step by step, '
           'the difference between feedforward, feedback and hybrid designs, which sounds it removes and why, and a short history. '
-          'Research it, then build the document.')
-LINE = 'Microphones hear the noise, a chip plays the same wave upside down, and the two cancel in your ear; it works best on low, steady sounds.'
+          'Use realistic pictures and explain each step in words too. Research it, then build the document.')
+LINE = 'Microphones hear the noise, a chip plays the same wave upside down, and the two cancel in your ear canal; it works best on low, steady sounds.'
+
+TXT_INTRO = """Ordinary headphones block noise the way earmuffs do: with mass and a seal. That works well for high-pitched sounds, but the low rumble of an engine passes through foam and plastic almost untouched. Noise-cancelling headphones add a second, active layer: they listen to the noise and fight it with more sound.
+
+To do this they carry parts that ordinary headphones do not have: at least one microphone on the outside of each cup, often another inside it, a signal-processing chip, an amplifier and a battery. The speaker driver then plays two things at once: your music, and an exact mirror image of the noise."""
+
+TXT_SOUND = """Sound is a pressure wave. A vibrating surface, such as a speaker cone or an engine block, pushes the air molecules next to it together, then pulls them apart, and this pattern of squeezed and stretched air travels outward at about 343 metres per second. Your eardrum moves in and out with the pressure, and the inner ear turns that motion into hearing.
+
+How fast the pattern repeats is the frequency. A low engine hum at 100 Hz repeats a hundred times a second, and each wave is about 3.4 m long, longer than a room is wide. A hiss at 5 kHz has waves only 7 cm long. This difference in length is the key to everything that follows: long waves are slow and predictable, short ones are fast and hard to follow."""
+
+TXT_CANCEL = """If two waves of the same size meet so that the squeezed air of one arrives exactly where the other is stretched, they add up to nothing: the air molecules stay evenly spread and the eardrum does not move. Physicists call this destructive interference.
+
+The headphones create that second wave on purpose. The outer microphone samples the incoming noise. The chip inverts it, flipping every high-pressure moment into a low-pressure one, and shapes it to match how sound changes on its way through the cup. The driver plays it, timed to arrive in the ear canal together with the noise. An inner microphone listens to what is left over and the chip keeps adjusting, so the result stays close to silence even when the noise changes or the headphones shift on your head."""
+
+TXT_DESIGNS = """Where the microphone sits decides what the system can know. A feedforward microphone on the outside of the cup hears the noise early, which gives the chip time to react, but it never hears what actually reaches your ear, so a loose fit or an unusual ear shape leaves errors it cannot see. It also picks up wind, which can be turned into a rumbling sound.
+
+A feedback microphone inside the cup hears exactly what you hear and can correct for fit and leaks, but it reacts later, and if pushed too hard the loop can start to ring. Most current headphones are hybrid: they combine both microphones to cover a wider range of frequencies with fewer side effects, at the cost of more processing and power."""
+
+TXT_LIMITS = """Cancellation only works when the anti-noise is the exact opposite of the noise at the same instant. Any delay turns into a timing error, and the same small delay is a far bigger part of a short wave than a long one. With a delay of 50 microseconds, a 100 Hz hum is still cancelled by about 30 dB, a 1 kHz voice by only about 10 dB, and above roughly 3 kHz the anti-noise arrives so late that it adds to the noise instead.
+
+That is why active cancellation is designed for low frequencies, and why every noise-cancelling headphone also relies on a good passive seal. The cushions and the shell block high-pitched sound well, and the active system takes care of the lows. Together they cover the range, with the hand-over somewhere around 1 kHz."""
+
+TXT_EVERYDAY = """In practice, the steadier and lower a sound is, the better it disappears: the drone inside a plane, the rumble of a train, an air conditioner. Speech and keyboard clicks are only partly reduced, and sudden sounds like a door slam get through, because they are over before the system can predict them.
+
+Many headphones also offer a transparency or ambient mode, which uses the same outer microphones the other way round: instead of cancelling the outside world, they play it into the cup so you can hear an announcement or a conversation without taking the headphones off."""
+
+TXT_HISTORY = """The idea is almost a century old. In 1934 the German physicist Paul Lueg filed a patent for cancelling sound with an inverted copy of itself; it was granted in the United States in 1936, but the electronics of the time could not make it work. In 1953 Harry Olson and his colleague May built an "electronic sound absorber" with a microphone, an amplifier and a loudspeaker, and suggested using it around the ears.
+
+Amar Bose began working on the problem after a noisy flight in 1978. In 1986 Dick Rutan and Jeana Yeager flew the Voyager aircraft non-stop around the world wearing prototype noise-cancelling headsets, and the first commercial headset, made for pilots, went on sale in 1989 after about ten years of development."""
 
 
 def example():
-    cut = cutaway()
+    import ex_headphones_art as A
+    ext = A.exterior()
     sources = ('- Wikipedia, *Active noise control*; Acoustical Society of America, *Active noise control* (147th meeting press room): Lueg\'s patent (US 2,043,416, 1936), the 1986 Voyager flight, the first commercial headset in 1989.\n'
                '- H. G. Leventhall, *Active attenuators: a historical review and some recent developments* (Institute of Acoustics): Olson and May\'s electronic sound absorber, 1953.\n'
                '- University of Alaska Fairbanks, *The history of active noise control*: Amar Bose\'s 1978 flight.\n'
                '- SoundGuys, *What is active noise cancellation*: feedforward, feedback and hybrid designs, their strengths and weaknesses.\n'
                '- Rivera, Nowak and Zölzer (2017), *Evaluation of a decoupled feedforward-feedback hybrid structure for active noise control*: hybrid ANC coverage.\n'
-               '- Phase-error formula: standard result for adding two equal sine waves; the 50 µs delay is an example value.')
-    pdf = dict(title='How noise-cancelling headphones work', subtitle='Inside the ear cup, the cancelling loop, the three designs, the physics and the history', cards=[
-        dict(type='drawing', title='', data=[cut]),
+               '- Speed of sound 343 m/s in air at 20 °C; the phase-error formula is the standard result for adding two equal sine waves, and the 50 µs delay is an example value.')
+    pdf = dict(title='How noise-cancelling headphones work', subtitle='From sound waves to silence: the parts, the physics, the designs and the history', cards=[
+        dict(type='drawing', title='', data=[ext]),
+        dict(type='markdown', title='Two ways to block noise', data=TXT_INTRO),
+        dict(type='drawing', title='', data=[A.section()]),
+        dict(type='markdown', title='What sound is', data=TXT_SOUND),
+        dict(type='drawing', title='', data=[A.sound()]),
+        dict(type='markdown', title='How the cancelling works', data=TXT_CANCEL),
+        dict(type='drawing', title='', data=[A.interference()]),
         dict(type='drawing', title='', data=[loop()]),
+        dict(type='markdown', title='Three designs', data=TXT_DESIGNS),
         dict(type='drawing', title='', data=[designs()]),
+        dict(type='markdown', title='Why only the low sounds', data=TXT_LIMITS),
         dict(type='drawing', title='', data=[physics()]),
         dict(type='drawing', title='', data=[coverage()]),
+        dict(type='markdown', title='In everyday use', data=TXT_EVERYDAY),
         dict(type='drawing', title='', data=[sounds()]),
+        dict(type='markdown', title='A short history', data=TXT_HISTORY),
         dict(type='drawing', title='', data=[history()]),
         dict(type='markdown', title='Sources', data=sources)])
     return dict(slug='headphones', kind='Research', title='How noise-cancelling headphones work', prompt=PROMPT, question=PROMPT, line=LINE,
-                chat=[cut], pdf=pdf, drawings=[c['data'][0] for c in pdf['cards'] if c['type'] == 'drawing'])
+                chat=[ext], pdf=pdf, drawings=[c['data'][0] for c in pdf['cards'] if c['type'] == 'drawing'])

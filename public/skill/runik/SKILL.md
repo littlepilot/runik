@@ -19,6 +19,10 @@ Everything Runik needs ships in this skill's folder (the folder holding this fil
 | `board.html` | The Runik Board artifact page. |
 | `version.json` | Skill version and board version. |
 
+## Output language
+
+This skill is written in English, but **everything it produces is in the user's language**: card titles, topics, notes, every visible text inside drawings, chart and table labels, card summaries and items, and the one line in the chat. The user's language is the language of their messages (or the language they asked for); if unclear, follow the project's instructions or the language of the conversation so far. Number formats follow the same locale (rules §2). Only technical identifiers (field names like `type` or `data_json`, token names, code, file paths) stay as they are. The examples in this skill are in English only as examples; translate them, never copy them as-is.
+
 ## 1. Find the board (once per session)
 
 Board state lives outside the skill folder so reinstalling never loses it: `~/.claude/runik/config.json`.
@@ -34,7 +38,7 @@ Board state lives outside the skill folder so reinstalling never loses it: `~/.c
   - capabilities: `{"db": {}}`
   - description: `Live side board where Runik answers are drawn.`
 
-  Write the returned link to `~/.claude/runik/config.json` (create the folder). Tell the user once, in one line, to keep the board open beside the chat, and offer once to pin it (Artifact `pin` only if they say yes).
+  Write the returned link to `~/.claude/runik/config.json` (create the folder). Tell the user once, in one line and in their language, to keep the board open beside the chat, and offer once to pin it (Artifact `pin` only if they say yes).
 - **Ephemeral environment** (a cloud session where `~/.claude` does not persist): keep the board link in project memory as `runik.md` instead and read it from there.
 - **No Artifact or ArtifactData tool in this session**: Runik can't draw here. Answer normally, short, and don't mention it again this session.
 
@@ -60,7 +64,7 @@ Write answers, explanations and results as cards: ArtifactData `set` on the boar
   - markdown: a short note
 - `note`: optional
 
-Visible text on the board is in the user's language.
+All visible text on the board is in the user's language (see "Output language").
 
 Colors only through board tokens: `var(--ink)`, `var(--muted)`, `var(--edge)`, `var(--line)`, `var(--good)`, `var(--warn)`, `var(--bad)`, `var(--focus)`, `var(--k2)`, `var(--tint)`, `var(--surface)`. A real object's body is the exception: it is drawn in natural colors with shading (rules §4b); meaning colors only go on the marks on top of it.
 
@@ -74,7 +78,7 @@ node <skill folder>/runik-lint.js card.json
 
 ## 5. The chat
 
-Write at most one line in the chat: `→ on the board: <title>`. Things that must be exact (code, commands, links, file paths) stay in the chat. If a decision is needed, ask the question in the chat in one line and show the options on the board.
+Write at most one line in the chat, in the user's language: `→ <"on the board" in the user's language>: <title>` (Turkish: `→ panoda: <başlık>`). Things that must be exact (code, commands, links, file paths) stay in the chat. If a decision is needed, ask the question in the chat in one line and show the options on the board.
 
 ## Updating
 

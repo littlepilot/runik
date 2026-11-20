@@ -1,8 +1,13 @@
 {
-  "version": "0.5.0",
+  "version": "0.5.1",
   "date": "2026-11-20",
-  "board": 4,
+  "board": 5,
   "notes": [
+    {
+      "version": "0.5.1",
+      "date": "2026-11-20",
+      "summary": "Everything Runik produces is in the user's language (drawings, cards, chat line); board UI follows the browser language (English, Turkish)"
+    },
     {
       "version": "0.5.0",
       "date": "2026-11-20",

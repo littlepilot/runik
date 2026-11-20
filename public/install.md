@@ -24,7 +24,7 @@ Read `~/.claude/skills/runik/SKILL.md` and follow step 1 ("Find the board"). If 
 
 ## 3. Write the first card
 
-ArtifactData `set` on the board's `cards` collection. doc_id: `k-<YYYYMMDD-HHMMSS>-installed`. Fields:
+ArtifactData `set` on the board's `cards` collection. doc_id: `k-<YYYYMMDD-HHMMSS>-installed`. Write the visible texts (title, topic, summary, items, number labels) in the user's language; the English below is only the meaning. Fields:
 - type: `card`
 - title: `Runik installed`
 - topic: `Install`
@@ -33,7 +33,7 @@ ArtifactData `set` on the board's `cards` collection. doc_id: `k-<YYYYMMDD-HHMMS
 
 ## 4. One message to the user
 
-At most three lines:
+In the user's language, at most three lines:
 - The board link and a suggestion to keep it open beside the chat.
 - Runik now works in every project; new sessions pick up the `runik` skill automatically.
 - Optional: the `Runik` output style can be turned on with `/output-style` to keep chat replies short.

@@ -167,6 +167,7 @@ Download the file with curl, read it and follow the steps in order. When done, s
   <p class="eyebrow">Sürüm notları</p>
   <h2 id="surum-b">Kurallar değiştikçe herkeste</h2>
   <ul class="notes">
+    <li><code>0.5.1</code><time datetime="2026-11-20">2026-11-20</time><span>Everything Runik produces is in the user&#x27;s language (drawings, cards, chat line); board UI follows the browser language (English, Turkish)</span></li>
     <li><code>0.5.0</code><time datetime="2026-11-20">2026-11-20</time><span>English everywhere and a single global skill (~/.claude/skills/runik): rules, tools and board ship inside the skill; one board for all projects</span></li>
     <li><code>0.4.0</code><time datetime="2026-11-19">2026-11-19</time><span>Object drawing: real objects shaded and in natural colors (Visual Explainer technique, runik_object.py); the board keeps shadow filters</span></li>
     <li><code>0.3.0</code><time datetime="2026-11-11">2026-11-11</time><span>Landing page and always-current install</span></li>
@@ -175,7 +176,7 @@ Download the file with curl, read it and follow the steps in order. When done, s
   </ul>
 </section>
 
-<footer><span>Runik 0.5.0</span><a href="https://github.com/littlepilot/runik">GitHub</a><a href="/skill/runik/version.json">version.json</a></footer>
+<footer><span>Runik 0.5.1</span><a href="https://github.com/littlepilot/runik">GitHub</a><a href="/skill/runik/version.json">version.json</a></footer>
 </div>
 <script>
 document.getElementById('kopyala').addEventListener('click',async e=>{const b=e.currentTarget,t=document.getElementById('prompt').textContent;try{await navigator.clipboard.writeText(t)}catch{const r=document.createRange();r.selectNodeContents(document.getElementById('prompt'));const s=getSelection();s.removeAllRanges();s.addRange(r);document.execCommand('copy')}b.textContent='Kopyalandı ✓';setTimeout(()=>b.textContent='Kopyala',1800)});

@@ -10,7 +10,7 @@ There are two kinds of drawing. The first job is deciding which one this is:
 
 One drawing may combine both: the object is drawn in natural color, and labels, arrows and status marks are placed on top in the Runik theme.
 
-Write all visible text in the user's language.
+All visible text (titles, labels, notes, legends, `<title>` and `<desc>`) is in the user's language, never English by default. The English words in this file ("times approximate", "e.g.", WHAT?, ANALOGY, CPU CHIP) are examples of the role; write their equivalent in the user's language.
 
 ## 0. Hard rule: text is the last resort
 

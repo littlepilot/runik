@@ -82,18 +82,28 @@ td.num,th.num{text-align:right}
 <div class="wrap">
   <header>
     <div class="logo"><b>ᚱ</b> Runik</div>
-    <div class="status"><span class="dot" id="dot"></span><span id="statusText">connecting</span></div>
+    <div class="status"><span class="dot" id="dot"></span><span id="statusText"></span></div>
   </header>
-  <div class="empty" id="empty"><div><b>ᚱ</b><p>Board ready. Whatever Claude shows will appear here.</p></div></div>
+  <div class="empty" id="empty"><div><b>ᚱ</b><p id="emptyText"></p></div></div>
   <section class="stage" id="stage" hidden></section>
-  <section class="history" id="history" hidden><h2>Earlier</h2><div class="list" id="list"></div></section>
+  <section class="history" id="history" hidden><h2 id="historyTitle"></h2><div class="list" id="list"></div></section>
 </div>
 
 <script>
 (() => {
 const isDark = () => document.documentElement.dataset.theme === 'dark' || (document.documentElement.dataset.theme !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches);
 if (window.mermaid) mermaid.initialize({ startOnLoad:false, theme: isDark() ? 'dark' : 'neutral', securityLevel:'strict', fontFamily:'Inter, sans-serif' });
-const TYPE_NAME = { drawing:'Drawing', diagram:'Diagram', chart:'Chart', table:'Table', card:'Card', markdown:'Note' };
+// Board UI text follows the viewer's browser language (card content is already written in the user's language).
+const STRINGS = {
+  en: { types: { drawing:'Drawing', diagram:'Diagram', chart:'Chart', table:'Table', card:'Card', markdown:'Note' }, connecting:'connecting', empty:'Board ready. Whatever Claude shows will appear here.', earlier:'Earlier',
+        noDrawing:'Drawing could not be shown', more:'more coming', noDiagramLib:'Diagram library failed to load', noChartLib:'Chart library failed to load', cantRender:'Could not render: ',
+        unreachable:'board data unreachable', signIn:'visible after sign-in', live:'live', lost:'connection lost, reload the page' },
+  tr: { types: { drawing:'Çizim', diagram:'Diyagram', chart:'Grafik', table:'Tablo', card:'Kart', markdown:'Not' }, connecting:'bağlanıyor', empty:'Pano hazır. Claude bir şey gösterdiğinde burada belirecek.', earlier:'Önceki',
+        noDrawing:'Çizim gösterilemedi', more:'devamı geliyor', noDiagramLib:'Diyagram kütüphanesi yüklenemedi', noChartLib:'Grafik kütüphanesi yüklenemedi', cantRender:'Çizilemedi: ',
+        unreachable:'pano verisine ulaşılamadı', signIn:'giriş yapınca görünür', live:'canlı', lost:'bağlantı koptu, sayfayı yenile' },
+};
+const T = STRINGS[(navigator.language || 'en').slice(0, 2).toLowerCase()] || STRINGS.en;
+const TYPE_NAME = T.types;
 const ICON = { ok:'✓', warn:'!', error:'✕', info:'i' };
 const SVG_ATTR = ['font-size','font-weight','text-anchor','stroke-dasharray','fill-opacity','stroke-linecap','stroke-linejoin','role','aria-label'];
 let cards = [], selectedId = null, follow = true, lastNewest = null, lastSignature = '';
@@ -103,6 +113,8 @@ const clock = (z) => { const d = new Date(z); return isNaN(d) ? '' : d.toLocaleT
 const num = (n) => n.toLocaleString(undefined);
 const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 const setStatus = (s, t) => { $('dot').className = 'dot ' + s; $('statusText').textContent = t; };
+$('statusText').textContent = T.connecting; $('emptyText').textContent = T.empty; $('historyTitle').textContent = T.earlier;
+document.documentElement.lang = T === STRINGS.tr ? 'tr' : 'en';
 
 function dataOf(c) {
   if (c.data_json != null) { try { return JSON.parse(c.data_json); } catch { return c.data_json; } }
@@ -119,19 +131,19 @@ async function render(card, box) {
         parts.forEach(p => {
           const w = el('div');
           w.innerHTML = window.DOMPurify ? DOMPurify.sanitize(String(p), { USE_PROFILES: { svg: true, svgFilters: true }, ADD_ATTR: SVG_ATTR }) : '';
-          if (!w.innerHTML) w.textContent = 'Drawing could not be shown';
+          if (!w.innerHTML) w.textContent = T.noDrawing;
           d.append(w);
         });
-        if (card.status === 'writing') { const y = el('div', 'writing'); y.append(el('i'), el('span', '', 'more coming')); d.append(y); }
+        if (card.status === 'writing') { const y = el('div', 'writing'); y.append(el('i'), el('span', '', T.more)); d.append(y); }
         box.append(d); break;
       }
       case 'diagram': {
-        if (!window.mermaid) throw new Error('Diagram library failed to load');
+        if (!window.mermaid) throw new Error(T.noDiagramLib);
         const { svg } = await mermaid.render('m' + String(card.id).replace(/\W/g, '') + Date.now(), String(v));
         const d = el('div', 'mermaid'); d.innerHTML = svg; box.append(d); break;
       }
       case 'chart': {
-        if (!window.vegaEmbed) throw new Error('Chart library failed to load');
+        if (!window.vegaEmbed) throw new Error(T.noChartLib);
         const spec = Object.assign({ width: 'container', autosize: { type: 'fit', contains: 'padding' } }, v);
         const d = el('div'); d.style.width = '100%'; box.append(d);
         await vegaEmbed(d, spec, { actions: false, theme: isDark() ? 'dark' : undefined,
@@ -171,7 +183,7 @@ async function render(card, box) {
       }
       default: box.append(el('pre', 'error-box', typeof v === 'string' ? v : JSON.stringify(v, null, 2)));
     }
-  } catch (e) { box.append(el('div', 'error-box', 'Could not render: ' + (e.message || e))); }
+  } catch (e) { box.append(el('div', 'error-box', T.cantRender + (e.message || e))); }
 }
 
 async function show(id) {
@@ -207,11 +219,11 @@ addEventListener('keydown', (e) => {
 });
 
 (async () => {
-  const timer = setTimeout(() => setStatus('off', 'board data unreachable'), 10000);
+  const timer = setTimeout(() => setStatus('off', T.unreachable), 10000);
   const db = window.claude ? await window.claude.use('db') : null;
-  if (!db) { clearTimeout(timer); setStatus('off', 'visible after sign-in'); return; }
+  if (!db) { clearTimeout(timer); setStatus('off', T.signIn); return; }
   db.collection('cards').orderBy('time', 'desc').limit(100).onSnapshot((snap) => {
-    clearTimeout(timer); setStatus('on', 'live');
+    clearTimeout(timer); setStatus('on', T.live);
     cards = snap.docs.map(d => ({ id: d.id, ...d.data() }));
     if (!cards.length) { $('empty').hidden = false; $('stage').hidden = true; $('history').hidden = true; return; }
     const newest = cards[0].id;
@@ -220,7 +232,7 @@ addEventListener('keydown', (e) => {
     if (!sel) return show(newest);
     if (JSON.stringify(sel) !== lastSignature) return show(selectedId);
     renderList();
-  }, (e) => { clearTimeout(timer); setStatus('off', 'connection lost, reload the page'); });
+  }, (e) => { clearTimeout(timer); setStatus('off', T.lost); });
 })();
 })();
 </script>

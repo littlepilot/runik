@@ -87,6 +87,7 @@ h2{font:700 clamp(26px,3.6vw,38px)/1.1 var(--display);letter-spacing:-.025em;mar
 .notes li{display:grid;grid-template-columns:80px 110px minmax(0,1fr);gap:12px;padding:12px 0;border-top:1px solid var(--line);font-size:14.5px}
 .notes code{font:600 13.5px var(--mono)}
 .notes time{color:var(--muted);font-size:13.5px}
+footer .by{margin-left:auto}
 footer{padding:40px 0 60px;color:var(--muted);font-size:13.5px;display:flex;gap:18px;flex-wrap:wrap;border-top:1px solid var(--line);margin-top:24px}
 code.inline{font:13.5px var(--mono);background:var(--tint);padding:2px 6px;border-radius:5px}
 @media (max-width:820px){
@@ -226,7 +227,7 @@ code.inline{font:13.5px var(--mono);background:var(--tint);padding:2px 6px;borde
   </ul>
 </section>
 
-<footer><span>Runik 0.7.1</span><a href="https://github.com/littlepilot/runik">GitHub</a><a href="/skill/runik/version.json">version.json</a></footer>
+<footer><span>Runik 0.7.1</span><a href="https://github.com/littlepilot/runik">GitHub</a><a href="/skill/runik/version.json">version.json</a><span class="by">Made by <a href="https://github.com/ahmetnavruz">@ahmetnavruz</a> and <a href="https://github.com/littlepilot">@littlepilot</a></span></footer>
 </div>
 <script>
 [['copy','line'],['copy2','line2']].forEach(([c,l])=>document.getElementById(c).addEventListener('click',async e=>{const b=e.currentTarget,el=document.getElementById(l),t=el.textContent;try{await navigator.clipboard.writeText(t)}catch{const r=document.createRange();r.selectNodeContents(el);const s=getSelection();s.removeAllRanges();s.addRange(r);document.execCommand('copy')}b.textContent='Copied ✓';setTimeout(()=>b.textContent='Copy',1800)}));

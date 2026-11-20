@@ -189,6 +189,7 @@ h1{font:700 22pt/1.2 "Space Grotesk",system-ui,sans-serif;margin:10px 0 4px;text
 .sub{color:var(--muted);margin:0}
 .date{color:var(--muted);font-size:9pt;margin-top:6px}
 section{margin:0 0 22px}
+.c-table,.c-card,.c-markdown{break-inside:avoid}
 h2{font:600 13.5pt/1.3 "Space Grotesk",system-ui,sans-serif;margin:0 0 10px;break-after:avoid;text-wrap:balance}
 figure{margin:0 0 14px;break-inside:avoid}
 figure svg{width:100%%;height:auto;display:block}

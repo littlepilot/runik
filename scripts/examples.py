@@ -222,218 +222,285 @@ EX.append(dict(
         dict(type='table', title='Inside the cup', data=dict(columns=['Part', 'Job'], rows=[
             ['Outer microphone', 'hears the noise before your ear does'], ['Chip', 'flips the wave in about a millisecond'], ['Speaker', 'plays music plus the mirror wave']]))])))
 
-# =========================================================== 3. football-sized Sun (scale)
-SUN_CM = 22.0
-SCALE = SUN_CM / 100 / 1391000  # metres per km
-PLANETS = [('Mercury', 4879, 57.9e6), ('Venus', 12104, 108.2e6), ('Earth', 12742, 149.6e6), ('Mars', 6779, 227.9e6),
-           ('Jupiter', 139820, 778.5e6), ('Saturn', 116460, 1433e6), ('Uranus', 50724, 2872e6), ('Neptune', 49244, 4495e6)]
-OBJECT = {'Mercury': 'poppy seed', 'Venus': 'peppercorn', 'Earth': 'peppercorn', 'Mars': 'mustard seed', 'Jupiter': 'grape',
-          'Saturn': 'cherry', 'Uranus': 'pea', 'Neptune': 'pea'}
+# =========================================================== 3. animal cell (object drawing)
+CELL = ('#fdeee9', '#f6c9bf', '#c4877c')
+NUC = ('#efe4f8', '#c3a6e2', '#7a58a3')
+MITO = ('#ffe0cc', '#f29e70', '#b45f38')
+LYSO = ('#e6f3d8', '#a3d17f', '#5e9140')
+GOLGI = ('#fff0c4', '#f2c04a', '#a87a14')
+ER = '#d98aa8'
+RIBO = '#7a3b55'
 
 
-def solar_main():
-    title = 'Football-sized Sun: Earth is a peppercorn 24 m away'
-    b, defs = [], ''
-    N = Obj('k20261120-sun')
-    N.add(N.ball(80, 130, 52, cols=N.GOLD, shadow=0.18, gloss=0.4))
-    N.add(N.ball(250, 134, 1.6, cols=N.WATER, shadow=0, gloss=0))
-    N.add(N.ball(400, 134, 5.6, cols=('#f6e3c4', '#d9a86c', '#9c6b3a'), shadow=0, gloss=0.3))
-    b.append(N.group(0, 0, 1))
-    defs += N.defs()
-    b += [T(80, 210, 'Sun', 13, 600, 'ink', 'middle'), T(80, 228, 'football · 22 cm', 11.5, 400, 'ink', 'middle')]
-    b.append(circ(250, 134, 14, 'focus', None, 0, 1.5))
-    b += [T(250, 210, 'Earth', 13, 600, 'ink', 'middle'), T(250, 228, 'peppercorn · 2 mm', 11.5, 400, 'ink', 'middle')]
-    b += [T(400, 210, 'Jupiter', 13, 600, 'ink', 'middle'), T(400, 228, 'grape · 2 cm', 11.5, 400, 'ink', 'middle')]
-    b.append(T(530, 120, 'true sizes,', 11.5, 400, 'muted'))
-    b.append(T(530, 138, 'same scale', 11.5, 400, 'muted'))
-    b.append(L(24, 252, 736, 252))
-    b.append(T(24, 278, 'How far from the football?', 14, 600))
-    x0, x1, maxm = 24, 736, 720.0
-    X = lambda m: x0 + m / maxm * (x1 - x0)
-    y = 340
-    b.append(L(x0, y, x1, y, 'edge', 1.5))
-    b.append(dot(x0, y, 6, 'warn'))
-    for name, diam, dist in PLANETS:
-        m = dist * SCALE
-        named = name in ('Earth', 'Jupiter', 'Saturn', 'Neptune')
-        b.append(dot(X(m), y, 4.5 if named else 3, 'focus' if name == 'Earth' else 'ink'))
-        if named:
-            up = name == 'Earth'
-            a = None if up else 'end' if name == 'Neptune' else 'middle'
-            b.append(T(X(m) + (6 if up else 0), y - 16 if up else y + 26, name, 11.5, 600, 'focus' if up else 'ink', a))
-            b.append(T(X(m) + (6 if up else 0), y - 30 if up else y + 42, '%d m' % round(m), 11.5, 400, 'ink', a))
-    b.append(P('M%.1f %d V%d H%.1f V%d' % (X(0), y + 64, y + 70, X(105), y + 64), 'ink', 1.25))
-    b.append(T(X(0), y + 88, 'one football pitch · 105 m', 11.5, 400, 'muted'))
-    b.append(R(24, 448, 712, 50, 'focus', 2, 'focus', 0.12))
-    b += [T(40, 470, 'Space is almost all empty', 13, 600), T(40, 488, 'the whole family spans 7 pitches', 11.5)]
-    b.append(T(24, 522, 'small dots: Mercury, Venus, Mars, Uranus · scale 1 : 6.3 billion', 11.5, 400, 'muted'))
-    return sv(532, title, 'If the Sun were a 22 cm football: Earth would be a 2 mm peppercorn 24 m away, Jupiter a 2 cm grape 123 m away, Saturn 227 m, Neptune 711 m. One football pitch is 105 m.', b, defs)
-
-
-def solar_star():
-    title = 'The nearest star would be ~6,300 km away'
-    b = []
-    b.append(L(24, 120, 736, 120, 'edge', 1.5))
-    b.append(dot(24, 120, 7, 'warn'))
-    b += [T(24, 96, 'our football', 11.5, 600), T(36, 150, 'Neptune · 0.7 km', 11.5, 400, 'muted')]
-    b.append(dot(24 + 0.7 / 6300 * 700, 120, 3, 'ink'))
-    b.append(dot(724, 120, 7, 'warn'))
-    b += [T(736, 96, 'Proxima Centauri', 11.5, 600, 'ink', 'end'), T(736, 150, '~6,300 km', 11.5, 600, 'ink', 'end')]
-    b.append(P('M24 190 V184 H%.1f V190' % (24 + 5840 / 6300 * 700), 'ink', 1.25))
-    b.append(T(24, 210, 'Paris to New York · 5,840 km', 11.5, 400, 'muted'))
-    b.append(T(24, 246, 'Neptune’s whole orbit is a dot at this scale', 11.5, 400, 'muted'))
-    return sv(256, title, 'At the same scale the nearest star, Proxima Centauri, would be about 6,300 km from the football, farther than Paris to New York (5,840 km). Neptune is only 0.7 km away.', b)
-
-
-EX.append(dict(
-    slug='solar', kind='Scale', question='How big is the solar system, really?',
-    line='Shrink the Sun to a football and the planets become seeds scattered over 700 m.',
-    chat=[solar_main()],
-    pdf=dict(title='Football-sized Sun: Earth is a peppercorn 24 m away', subtitle='The solar system at 1 : 6.3 billion', cards=[
-        dict(type='drawing', title='', data=[solar_main()]),
-        dict(type='table', title='Every planet at this scale', data=dict(columns=['Planet', 'Looks like', 'Size', 'Distance'], rows=[
-            [n, OBJECT[n], ('%.1f mm' % (d * SCALE * 1000)) if d * SCALE * 1000 < 10 else '%.1f cm' % (d * SCALE * 100), '%d m' % round(dist * SCALE)]
-            for n, d, dist in PLANETS])),
-        dict(type='drawing', title='', data=[solar_star()])])))
-
-# =========================================================== 4. coffee brewing (comparison columns)
-METHODS = [('Espresso', '~30 s', 'fine', 2.2, 5, 2, 1), ('Pour-over', '~3 min', 'medium', 4.0, 3, 2, 4), ('French press', '~4 min', 'coarse', 6.5, 4, 5, 4)]
-
-
-def coffee_main():
-    title = 'French press: strong coffee, almost no effort'
-    b = []
-    for k, (n, t, g, gr, strength, ease, cheap) in enumerate(METHODS):
-        x = 24 + k * 244
-        foc = n == 'French press'
-        b.append(R(x, 52, 224, 150, 'focus' if foc else 'edge', 2 if foc else 1.25, 'focus' if foc else None, 0.06))
-        b.append(T(x + 16, 76, n, 13, 600))
-        cx = x + 160
-        if k == 0:
-            b += [P('M%d 100 h40 v26 a14 14 0 0 1 -14 14 h-12 a14 14 0 0 1 -14 -14 z' % (cx - 20), 'ink', 1.5), P('M%d 108 a8 8 0 0 1 0 14' % (cx + 20), 'ink', 1.5)]
-        elif k == 1:
-            b += [P('M%d 92 h52 l-18 34 h-16 z' % (cx - 26), 'ink', 1.5), R(cx - 18, 128, 36, 20, 'ink', 1.5, rx=4)]
-        else:
-            b += [R(cx - 18, 96, 36, 52, 'ink', 1.5, rx=4), L(cx, 86, cx, 116, 'ink', 1.5), L(cx - 14, 86, cx + 14, 86, 'ink', 2), L(cx - 16, 116, cx + 16, 116, 'ink', 1.5)]
-        b.append(T(x + 16, 100, t, 11.5, 400))
-        b.append(T(x + 16, 118, g + ' grind', 11.5, 400, 'muted'))
-        for j in range(5):
-            b.append(dot(x + 22 + j * (gr * 2.4 + 4), 140, gr, 'muted'))
-        b.append(T(x + 16, 186, ('needs a machine', 'needs a steady pour', 'pour, wait, press')[k], 11.5, 400, 'muted'))
-    b.append(L(24, 222, 736, 222))
-    rows = [('Strength', 4), ('Ease', 5), ('Cheap gear', 6)]
-    for i, (label, col) in enumerate(rows):
-        y = 252 + i * 30
-        b.append(T(24, y, label, 13, 600))
-        for k, m in enumerate(METHODS):
-            b.append(rating(24 + k * 244 + 150, y - 4, m[col], 'focus' if m[0] == 'French press' else 'edge'))
-    b.append(R(24, 334, 712, 50, 'focus', 2, 'focus', 0.12))
-    b += [T(40, 356, 'Start with a French press', 13, 600), T(40, 374, 'espresso is stronger, but needs a machine', 11.5)]
-    b.append(T(24, 408, 'grind dots drawn to relative size · ratings out of 5, higher = better', 11.5, 400, 'muted'))
-    return sv(418, title, 'Espresso: about 30 seconds, fine grind, strength 5, ease 2, cheap gear 1. Pour-over: about 3 minutes, medium grind, strength 3, ease 2, cheap gear 4. French press: about 4 minutes, coarse grind, strength 4, ease 5, cheap gear 4.', b)
-
-
-def coffee_ratio():
-    title = 'Same beans, very different amounts of water'
-    b = [T(24, 62, 'WATER PER GRAM OF COFFEE', 11.5, 600, 'muted')]
-    rows = [('Espresso', 2), ('French press', 15), ('Pour-over', 16)]
-    for i, (n, r) in enumerate(rows):
-        y = 92 + i * 40
-        b.append(T(24, y + 11, n, 13, 600))
-        for j in range(r):
-            b.append(R(160 + j * 30, y, 24, 14, 'focus', 1.25, 'focus', 0.25, rx=3))
-        b.append(T(160 + r * 30 + 4, y + 11, '%d g' % r, 11.5, 600))
-    b.append(T(24, 236, 'each cell = 1 g of water · ratios typical', 11.5, 400, 'muted'))
-    return sv(246, title, 'Water per gram of coffee: espresso 2 g, French press 15 g, pour-over 16 g.', b)
-
-
-EX.append(dict(
-    slug='coffee', kind='Comparison', question='Espresso, pour-over or French press: which should I start with?',
-    line='French press: strong cup, cheap gear, no technique to learn.',
-    chat=[coffee_main()],
-    pdf=dict(title='French press: strong coffee, almost no effort', subtitle='Choosing a first brewing method', cards=[
-        dict(type='drawing', title='', data=[coffee_main()]),
-        dict(type='drawing', title='', data=[coffee_ratio()]),
-        dict(type='card', title='French press in four steps', data=dict(summary='15 g coarse coffee, 250 g hot water, 4 minutes', status='info',
-                                                                       items=['Water just off the boil', 'Stir once after pouring', 'Lid on, wait 4 minutes', 'Press slowly, pour at once']))])))
-
-# =========================================================== 5. a cat's day (data: cell rows)
-TABBY = ('#f9d3a2', '#e8a25a', '#a8642a')
-CAT_AWAKE = {5, 6, 7, 12, 18, 19, 20, 21, 22}   # active at dawn and dusk, a short look around at noon
-YOU_ASLEEP = {23, 0, 1, 2, 3, 4, 5, 6}
-
-
-def cat_curled(prefix):
-    '''A sleeping tabby curled into a loaf, tail wrapped around the front.'''
+def cell_drawing(prefix, s=1.0):
     N = Obj(prefix)
-    body = smooth(blob(60, 62, 48, 28, n=14, jitter=0.04, seed=3))
-    N.add(N.shadow(body, 3, 5, 4, 0.2))
-    N.add('<path d="%s" fill="%s" stroke="%s" stroke-width="2"/>' % (body, N.radial(*TABBY), TABBY[2]))
+    body = smooth(blob(220, 150, 200, 128, n=16, jitter=0.045, seed=5))
+    N.add(N.shadow(body, 4, 7, 6, 0.18))
+    N.add('<path d="%s" fill="%s" stroke="%s" stroke-width="5"/>' % (body, N.radial(*CELL), CELL[2]))
+    N.add('<path d="%s" fill="none" stroke="#fff" stroke-width="1.2" opacity="0.7" transform="translate(220 150) scale(0.97) translate(-220 -150)"/>' % body)
+    # rough ER: arcs around the nucleus, studded with ribosomes
+    for k, r in enumerate((76, 88, 100)):
+        pts = [(200 + r * math.cos(math.radians(a)), 140 + r * 0.86 * math.sin(math.radians(a))) for a in range(110, 236, 6)]
+        N.add('<path d="M%s" fill="none" stroke="%s" stroke-width="4.5" stroke-linecap="round"/>' % (' L'.join('%.1f,%.1f' % p for p in pts), ER))
+        for x, y in pts[1::3]:
+            N.add('<circle cx="%.1f" cy="%.1f" r="2.2" fill="%s"/>' % (x + 3, y, RIBO))
+    N.mark('er', 200 + 100 * math.cos(math.radians(200)), 140 + 86 * math.sin(math.radians(200)))
+    # nucleus + nucleolus + pores
+    N.add(N.ball(200, 140, 62, 54, cols=NUC, stroke=NUC[2], sw=2.5, shadow=0.15, gloss=0.35))
+    N.add(N.ball(214, 150, 17, cols=('#b597d6', '#8a64b8', '#553a7c'), shadow=0, gloss=0.2))
+    for a in range(0, 360, 40):
+        N.add('<circle cx="%.1f" cy="%.1f" r="2.5" fill="%s"/>' % (200 + 62 * math.cos(math.radians(a)), 140 + 54 * math.sin(math.radians(a)), CELL[0]))
+    N.mark('nucleus', 176, 98)
+    # golgi: stacked bent sacs
     for k in range(4):
-        N.add('<path d="M%d,%d q8,-10 16,0" fill="none" stroke="%s" stroke-width="3" stroke-linecap="round" opacity="0.6"/>' % (34 + k * 14, 46, TABBY[2]))
-    N.add('<path d="M18,74 C14,96 70,98 104,84" fill="none" stroke="%s" stroke-width="13" stroke-linecap="round"/>' % TABBY[2])
-    N.add('<path d="M18,74 C14,96 70,98 104,84" fill="none" stroke="%s" stroke-width="9" stroke-linecap="round"/>' % TABBY[1])
-    N.add('<path d="M88,40 L92,18 L104,34 Z M112,34 L124,18 L126,42 Z" fill="%s" stroke="%s" stroke-width="2" stroke-linejoin="round"/>' % (TABBY[1], TABBY[2]))
-    N.add(N.ball(108, 52, 22, 20, cols=TABBY, stroke=TABBY[2], sw=2, shadow=0, gloss=0.25))
-    N.add('<path d="M96,52 q4,4 8,0 M112,52 q4,4 8,0" fill="none" stroke="#5a3a1c" stroke-width="2" stroke-linecap="round"/>')
-    N.add('<path d="M106,60 l2,2 l2,-2" fill="none" stroke="#7a4a2a" stroke-width="1.5"/>')
+        N.add(N.tube('M%d,%d q30,-%d 62,0' % (300, 176 + k * 11, 16 - k), GOLGI[2], GOLGI[1], 8, 5))
+    N.mark('golgi', 362, 186)
+    # mitochondria
+    for cx, cy, rot in ((330, 92, -18), (112, 236, 22), (298, 252, -8)):
+        cr = ' '.join('L%.1f,%.1f' % (cx - 22 + i * 6, cy + (6 if i % 2 else -6)) for i in range(8))
+        N.add('<g transform="rotate(%d %d %d)">%s<path d="M%d,%d %s" fill="none" stroke="%s" stroke-width="2" stroke-linejoin="round"/></g>' % (
+            rot, cx, cy, N.ball(cx, cy, 30, 14, cols=MITO, stroke=MITO[2], sw=2, shadow=0.15, gloss=0.3), cx - 22, cy, cr, MITO[2]))
+    N.mark('mito', 356, 84)
+    # lysosomes and free ribosomes
+    N.add(N.ball(74, 118, 11, cols=LYSO, stroke=LYSO[2], sw=1.5, shadow=0.12, gloss=0.4))
+    N.add(N.ball(382, 140, 9, cols=LYSO, stroke=LYSO[2], sw=1.5, shadow=0.12, gloss=0.4))
+    N.mark('lyso', 66, 116)
+    for x, y in ((290, 130), (300, 142), (286, 152), (150, 60), (168, 54), (250, 228), (262, 236), (88, 170), (96, 182), (360, 220)):
+        N.add('<circle cx="%d" cy="%d" r="2.4" fill="%s"/>' % (x, y, RIBO))
+    N.mark('ribo', 300, 142)
+    N.mark('membrane', 372, 58)
     return N
 
 
-def cat_main():
-    title = 'A cat sleeps 15 hours a day, you sleep 8'
-    b, defs = [], ''
-    x0, cw = 150, 23
-    X = lambda h: x0 + h * (cw + 1)
-    b.append('<rect x="%d" y="52" width="%d" height="150" fill="var(--tint)"/>' % (X(5) - 2, 3 * (cw + 1) + 3))
-    b.append('<rect x="%d" y="52" width="%d" height="150" fill="var(--tint)"/>' % (X(18) - 2, 5 * (cw + 1) + 3))
-    b += [T(X(5), 68, 'dawn', 11.5, 600, 'muted'), T(X(18), 68, 'dusk', 11.5, 600, 'muted')]
-    for h in (0, 6, 12, 18, 24):
-        b.append(T(X(h) - (0 if h < 24 else 1), 194, '%02d:00' % (h % 24) if h < 24 else '24:00', 11.5, 400, 'muted', 'middle' if 0 < h < 24 else ('end' if h == 24 else None)))
-    for row, (name, detail, asleep, y) in enumerate([('Cat', '~15 h asleep', lambda h: h not in CAT_AWAKE, 88),
-                                                    ('You', '~8 h asleep', lambda h: h in YOU_ASLEEP, 136)]):
-        b += [T(24, y + 12, name, 13, 600), T(24, y + 30, detail, 11.5, 400, 'muted')]
-        for h in range(24):
-            on = asleep(h)
-            b.append(R(X(h), y, cw, 30, 'focus' if on else 'edge', 1.25, 'focus' if on else None, 0.3, rx=4))
-    N = cat_curled('k20261120-cat')
-    b.append(N.group(560, 226, 0.95))
-    defs += N.defs()
-    b.append(L(24, 214, 736, 214))
-    b += [T(24, 244, 'Built for twilight', 14, 600), T(24, 266, 'awake when mice are', 11.5, 400, 'muted')]
-    b += [T(24, 300, 'Two thirds of the day', 13, 600), T(24, 318, 'mostly light naps, ears on', 11.5)]
-    b.append(legend(24, 352, [('box', 'focus', 'asleep'), ('box', 'edge', 'awake'), ('box', 'line', 'dawn · dusk')]))
-    b.append(T(24, 376, 'one cell = one hour · a typical adult cat', 11.5, 400, 'muted'))
-    return sv(386, title, 'Hour-by-hour day: a cat sleeps about 15 of 24 hours and is awake mainly at dawn (05-08) and dusk (18-23); a person sleeps about 8 hours, 23:00-07:00. Cats are built for twilight hunting.', b, defs)
+def cell_main():
+    title = 'A cell runs like a tiny city'
+    N = cell_drawing('k20261120-cell')
+    b = [N.group(188, 46, 0.92)]
+    labels = {'left': [('nucleus', 'Nucleus', 'town hall · DNA'), ('lyso', 'Lysosome', 'recycling plant'), ('er', 'ER', 'assembly line')],
+              'right': [('membrane', 'Membrane', 'city wall · gates'), ('mito', 'Mitochondria', 'power plants'), ('ribo', 'Ribosomes', 'workshops'), ('golgi', 'Golgi', 'post office')]}
+    for side, items in labels.items():
+        ys = [92, 182, 272] if side == 'left' else [80, 150, 220, 290]
+        for (key, name, analogy), y in zip(items, ys):
+            mx, my = N.at(key)
+            if side == 'left':
+                b.append(L(mx, my, 160, y - 4, 'ink', 1))
+                b.append(dot(mx, my, 3, 'ink'))
+                b += [T(24, y, name, 13, 600), T(24, y + 18, analogy, 11.5, 400, 'muted')]
+            else:
+                b.append(L(mx, my, 600, y - 4, 'ink', 1))
+                b.append(dot(mx, my, 3, 'ink'))
+                b += [T(608, y, name, 13, 600), T(608, y + 18, analogy, 11.5, 400, 'muted')]
+    b.append(T(24, 340, 'simplified drawing · an animal cell is ~20 µm across', 11.5, 400, 'muted'))
+    return sv(350, title, 'Animal cell with labelled parts and everyday analogies: nucleus with DNA (town hall), mitochondria (power plants), ribosomes (workshops), endoplasmic reticulum (assembly line), Golgi apparatus (post office), lysosome (recycling plant), membrane (city wall with gates).', b, N.defs())
 
 
-def cat_life():
-    title = 'A 15-year-old cat has slept about 9 years'
-    b = [T(24, 62, 'EACH CELL = ONE YEAR OF LIFE', 11.5, 600, 'muted')]
-    for row, (name, years, asleep, y) in enumerate([('Cat', 15, 9.4, 84), ('You', 80, 26.7, 150)]):
-        b += [T(24, y + 12, name, 13, 600), T(24, y + 30, '%d years' % years, 11.5, 400, 'muted')]
-        per, cw = (15, 26) if years == 15 else (20, 12)
-        for k in range(years):
-            col, rr = k % per, k // per
-            x, yy = 130 + col * (cw + 3), y + rr * (cw + 3)
-            full = k + 1 <= asleep
-            part = not full and k < asleep
-            b.append(R(x, yy, cw, cw, 'focus' if full or part else 'edge', 1.25, 'focus' if full else 'focus' if part else None, 0.3 if full else 0.12, rx=3))
-        b.append(T(130 + per * (cw + 3) + 6, y + 12, '~%g years asleep' % round(asleep), 11.5, 600))
-    b.append(legend(24, 250, [('box', 'focus', 'asleep'), ('box', 'edge', 'awake')]))
-    return sv(262, title, 'A 15-year-old cat has slept about 9 of its 15 years (15 of 24 hours a day); an 80-year-old person about 27 years (8 of 24 hours).', b)
+def cell_scale():
+    title = 'About 50 cells fit across one millimetre'
+    b = [T(24, 62, '1 MM, ONE CIRCLE = ONE CELL (~20 µm)', 11.5, 600, 'muted')]
+    w = 712 / 50
+    for i in range(50):
+        b.append(circ(24 + w * (i + 0.5), 114, w / 2 - 1, 'focus', 'focus', 0.2, 1))
+    b.append(P('M24 96 V90 H%.1f V96' % (24 + 3.5 * w), 'ink', 1.25))
+    b.append(T(24 + 3.5 * w + 8, 96, 'a human hair · ~70 µm', 11.5, 400, 'ink'))
+    b.append(P('M24 134 V140 H736 V134', 'ink', 1.25))
+    b.append(T(380, 158, '1 mm', 11.5, 600, 'ink', 'middle'))
+    b.append(T(24, 192, 'your body · ~30 trillion cells', 11.5, 400, 'muted'))
+    return sv(202, title, 'At about 20 micrometres each, 50 animal cells line up across one millimetre; a human hair (about 70 µm) is 3 to 4 cells wide. A human body has about 30 trillion cells.', b)
 
 
 EX.append(dict(
-    slug='cat', kind='Data', question='Is it normal that my cat sleeps all day?',
-    line='Yes: about 15 hours is typical, and the waking hours cluster at dawn and dusk.',
-    chat=[cat_main()],
-    pdf=dict(title='A cat sleeps 15 hours a day, you sleep 8', subtitle='How cats sleep', cards=[
-        dict(type='drawing', title='', data=[cat_main()]),
-        dict(type='drawing', title='', data=[cat_life()]),
-        dict(type='card', title='When to worry', data=dict(summary='12 to 16 hours a day is normal', status='ok',
-                                                           items=['Kittens and old cats sleep even more', 'Most of it is light dozing', 'A sudden change in sleep is worth a vet visit']))])))
+    slug='cell', kind='Object drawing', question='What’s inside a cell?',
+    line='A control room, power plants and workshops, all inside one wall.',
+    chat=[cell_main()],
+    pdf=dict(title='A cell runs like a tiny city', subtitle='Anatomy of an animal cell', cards=[
+        dict(type='drawing', title='', data=[cell_main()]),
+        dict(type='drawing', title='', data=[cell_scale()]),
+        dict(type='table', title='Who does what', data=dict(columns=['Part', 'Job'], rows=[
+            ['Nucleus', 'keeps the DNA and decides which proteins to make'], ['Ribosomes', 'build proteins from the recipe'],
+            ['ER', 'folds and moves new proteins'], ['Golgi', 'packs and labels them for delivery'], ['Mitochondria', 'turn food into usable energy (ATP)'],
+            ['Lysosomes', 'break down waste and worn parts'], ['Membrane', 'decides what gets in and out']]))])))
 
+# =========================================================== 4. lithium-ion battery (cross-section + process)
+COPPER = ('#f8cfaa', '#d98b4e', '#9a5428')
+GRAPHITE = ('#8d929b', '#555b65', '#2b2f36')
+OXIDE = ('#e1e5f2', '#9aa3c7', '#5b6590')
+ELECTROLYTE = ('#fdf9ea', '#f1e8c6', '#c2b383')
+ION = ('#fff6cf', '#f2c94c', '#9b7612')
+
+
+def battery_cell(N, ions):
+    '''Cross-section: copper foil | graphite (−) | electrolyte + separator | metal oxide (+) | aluminium foil.'''
+    N.add(N.shadow(rrect(0, 0, 400, 160, 6), 4, 7, 5, 0.2))
+    N.add('<path d="%s" fill="%s" stroke="%s" stroke-width="1.5"/>' % (rrect(140, 0, 120, 160, 0), N.linear(ELECTROLYTE[0], ELECTROLYTE[1]), ELECTROLYTE[2]))
+    for k in range(6):
+        N.add('<path d="%s" fill="%s" stroke="%s" stroke-width="1"/>' % (rrect(12, 8 + k * 25, 128, 17, 3), N.linear(GRAPHITE[0], GRAPHITE[1]), GRAPHITE[2]))
+        N.add('<path d="%s" fill="%s" stroke="%s" stroke-width="1"/>' % (rrect(260, 8 + k * 25, 128, 17, 3), N.linear(OXIDE[0], OXIDE[1]), OXIDE[2]))
+    N.add('<path d="%s" fill="%s" stroke="%s" stroke-width="1.2"/>' % (rrect(0, -6, 12, 172, 2), N.linear(COPPER[0], COPPER[1], 0, 0, 1, 0), COPPER[2]))
+    N.add('<path d="%s" fill="%s" stroke="%s" stroke-width="1.2"/>' % (rrect(388, -6, 12, 172, 2), N.linear(N.METAL[0], N.METAL[1], 0, 0, 1, 0), N.METAL[2]))
+    N.add('<path d="M200,0 V160" stroke="%s" stroke-width="3" stroke-dasharray="6 4"/>' % ELECTROLYTE[2])
+    for x, y in ions:
+        N.add(N.ball(x, y, 5.5, cols=ION, stroke=ION[2], sw=1, shadow=0, gloss=0.5))
+    N.mark('neg', 6, -6)
+    N.mark('pos', 394, -6)
+    N.mark('mid', 200, 80)
+    N.mark('anode', 76, 168)
+    N.mark('sep', 200, 168)
+    N.mark('cathode', 324, 168)
+
+
+def phone_icon(x, y):
+    return R(x - 9, y - 15, 18, 30, 'ink', 1.5, rx=4) + L(x - 3, y + 10, x + 3, y + 10, 'ink', 1.5)
+
+
+def plug_icon(x, y):
+    return R(x - 10, y - 8, 20, 16, 'ink', 1.5, rx=4) + L(x - 4, y - 8, x - 4, y - 15, 'ink', 1.5) + L(x + 4, y - 8, x + 4, y - 15, 'ink', 1.5) + L(x, y + 8, x, y + 15, 'ink', 1.5)
+
+
+def battery_main():
+    title = 'A battery moves lithium ions from side to side'
+    b, defs = [], ''
+    gaps = lambda side, n: [(30 + (k % 3) * 40 + side, 29 + (k // 3) * 50 + (k % 2) * 25) for k in range(n)]
+    rows = [('use', 'In use', 'phone on', 1, gaps(0, 3) + [(160, 50), (182, 110), (226, 70)] + gaps(248, 4)),
+            ('charge', 'Charging', 'plugged in', -1, gaps(0, 7) + [(170, 70), (232, 112)] + gaps(248, 1))]
+    for i, (key, name, detail, direction, ions) in enumerate(rows):
+        y0 = 92 + i * 256
+        N = Obj('k20261120-bat-' + key)
+        battery_cell(N, ions)
+        b.append(N.group(188, y0, 0.9))
+        defs += N.defs()
+        b += [T(24, y0 + 64, name, 13, 600), T(24, y0 + 82, detail, 11.5, 400, 'muted')]
+        (nx, ny), (px, py), (mx, my) = N.at('neg'), N.at('pos'), N.at('mid')
+        top = y0 - 30
+        b.append(P('M%.1f %.1f V%d H%.1f V%.1f' % (nx, ny, top, px, py), 'edge', 1.5))
+        cx = (nx + px) / 2
+        b.append(R(cx - 22, top - 20, 44, 40, 'ink', 0, 'surface', 1, rx=6))
+        b.append(phone_icon(cx, top) if direction > 0 else plug_icon(cx, top))
+        for ex in (nx + 50, px - 50):
+            b.append('<path d="M%.1f %d l%d -4.5 v9 z" fill="var(--ink)"/>' % (ex + 4 * direction, top, -8 * direction))
+        b.append(T(nx + 30, top - 8, 'electrons', 11.5, 400, 'muted'))
+        b.append(P('M%.1f %.1f H%.1f' % (mx - 36 * direction, my, mx + 30 * direction), 'focus', 3))
+        b.append('<path d="M%.1f %.1f l%d -6 v12 z" fill="var(--focus)"/>' % (mx + 38 * direction, my, -10 * direction))
+        if i == 0:
+            for k, nm, dt in (('anode', 'Graphite', '− side'), ('sep', 'Separator', 'ions only'), ('cathode', 'Metal oxide', '+ side')):
+                x, yy = N.at(k)
+                b += [T(x, yy + 18, nm, 13, 600, 'ink', 'middle'), T(x, yy + 36, dt, 11.5, 400, 'muted', 'middle')]
+    b.append(L(24, 290, 736, 290))
+    b.append(legend(24, 530, [('arrow', 'focus', 'lithium ions'), ('arrow', 'ink', 'electrons (wire)')]))
+    b.append(T(24, 554, 'simplified drawing · layer and ion counts illustrative', 11.5, 400, 'muted'))
+    return sv(564, title, 'Cross-section of a lithium-ion cell: copper foil, graphite (negative), electrolyte with separator, metal oxide (positive), aluminium foil. In use, lithium ions move from graphite to the metal oxide through the electrolyte while electrons flow through the phone. Charging pushes them back into the graphite.', b, defs)
+
+
+def battery_care():
+    title = 'Batteries age slowest between 20% and 80%'
+    b = [T(24, 62, 'CHARGE LEVEL, ONE CELL = 5%', 11.5, 600, 'muted')]
+    w = 712 / 20
+    for i in range(20):
+        c = 'good' if 4 <= i < 16 else 'warn'
+        b.append(R(24 + i * w + 1, 76, w - 4, 26, c, 1.25, c, 0.25, rx=4))
+    for v in (0, 20, 80, 100):
+        b.append(T(24 + v / 5 * w - (0 if v < 100 else 3), 122, '%d%%' % v, 11.5, 400, 'muted', 'middle' if 0 < v < 100 else ('end' if v == 100 else None)))
+    b += [T(24 + 10 * w, 150, '✓ gentle', 11.5, 600, 'good', 'middle'), T(24 + 2 * w, 150, '! strain', 11.5, 600, 'warn', 'middle'), T(24 + 18 * w, 150, '! strain', 11.5, 600, 'warn', 'middle')]
+    b.append(R(24, 172, 712, 50, 'bad', 2, 'bad', 0.1))
+    b += [T(40, 194, 'Heat ages it fastest', 13, 600), T(40, 212, 'no charging under pillows or in the sun', 11.5)]
+    return sv(232, title, 'Charge level in 5% cells: 20 to 80% is gentle on the battery, the ends below 20% and above 80% strain it. Heat ages it fastest.', b)
+
+
+EX.append(dict(
+    slug='battery', kind='Cross-section', question='How does a lithium-ion battery work?',
+    line='Lithium ions shuttle through the liquid; electrons take the long way through your phone.',
+    chat=[battery_main()],
+    pdf=dict(title='A battery moves lithium ions from side to side', subtitle='How a lithium-ion battery works', cards=[
+        dict(type='drawing', title='', data=[battery_main()]),
+        dict(type='drawing', title='', data=[battery_care()]),
+        dict(type='table', title='The layers', data=dict(columns=['Layer', 'Made of', 'Job'], rows=[
+            ['Negative electrode', 'graphite on copper foil', 'stores ions when charged'], ['Electrolyte', 'lithium salt in solvent', 'lets ions through'],
+            ['Separator', 'porous plastic film', 'keeps the sides from touching'], ['Positive electrode', 'metal oxide on aluminium foil', 'takes ions when in use']]))])))
+
+# =========================================================== 5. eight coffees (comparison)
+LAYER = {'espresso': ('#7a4a2c', '#4a2a17'), 'crema': ('#d29a5c', '#a86c35'), 'milk': ('#f6ecdd', '#d9c6aa'), 'foam': ('#fffdf8', '#e6dccd'),
+         'water': ('#a9714a', '#7a4a2c'), 'chocolate': ('#5a3320', '#3a1f12')}
+NAMES = {'espresso': 'espresso', 'milk': 'steamed milk', 'foam': 'foam', 'water': 'hot water', 'chocolate': 'chocolate'}
+DRINKS = [('Espresso', [('espresso', 30)]), ('Macchiato', [('espresso', 30), ('foam', 15)]), ('Cortado', [('espresso', 30), ('milk', 30)]),
+          ('Flat white', [('espresso', 60), ('milk', 100), ('foam', 10)]), ('Cappuccino', [('espresso', 30), ('milk', 60), ('foam', 60)]),
+          ('Americano', [('espresso', 30), ('water', 120)]), ('Mocha', [('chocolate', 20), ('espresso', 30), ('milk', 140), ('foam', 20)]),
+          ('Latte', [('espresso', 30), ('milk', 200), ('foam', 15)])]
+SHARE = lambda d: sum(v for k, v in d[1] if k == 'espresso') / sum(v for _, v in d[1])
+
+
+def glass(N, cx, base, layers, px=0.72):
+    '''Straight glass seen from the side; layers bottom to top, height ∝ millilitres.'''
+    w, y = 54, base
+    h = sum(v for _, v in layers) * px
+    out = []
+    for k, (kind, v) in enumerate(layers):
+        lh = v * px
+        c = LAYER[kind]
+        out.append('<path d="%s" fill="%s"/>' % (rrect(cx - w / 2 + 3, y - lh, w - 6, lh, 2 if k == 0 else 0), N.linear(c[0], c[1], 0, 0, 1, 0)))
+        if kind == 'espresso' and (k == len(layers) - 1 or layers[k + 1][0] != 'water'):
+            out.append('<path d="%s" fill="%s"/>' % (rrect(cx - w / 2 + 3, y - lh, w - 6, min(4, lh / 3), 0), LAYER['crema'][0]))
+        y -= lh
+    top = base - h - 8
+    N.add(N.shadow(rrect(cx - w / 2, top, w, base - top, 6), 2, 4, 3, 0.15))
+    N.add('<path d="%s" fill="%s" opacity="0.5"/>' % (rrect(cx - w / 2, top, w, base - top, 6), N.GLASS[0]))
+    N.add(*out)
+    N.add('<path d="M%.1f,%.1f V%.1f q0,6 6,6 H%.1f q6,0 6,-6 V%.1f" fill="none" stroke="%s" stroke-width="2"/>' % (cx - w / 2, top, base, cx + w / 2 - 6, top, N.GLASS[2]))
+    N.add('<path d="M%.1f,%.1f V%.1f" stroke="#fff" stroke-width="3" opacity="0.7" stroke-linecap="round"/>' % (cx - w / 2 + 7, top + 6, base - 6))
+    return h
+
+
+def coffee_main():
+    title = 'Same espresso base, eight drinks: milk decides'
+    N = Obj('k20261120-cof')
+    b = []
+    base = 262
+    for i, d in enumerate(DRINKS):
+        cx = 68 + i * 89
+        glass(N, cx, base, d[1])
+        ml = sum(v for _, v in d[1])
+        b += [T(cx, base + 26, d[0], 13, 600, 'ink', 'middle'), T(cx, base + 44, '~%d ml' % ml, 11.5, 400, 'muted', 'middle')]
+    b.insert(0, N.group(0, 0, 1))
+    b.append(L(24, 324, 736, 324))
+    b.append(T(24, 350, 'How much of the cup is coffee', 14, 600))
+    for i, d in enumerate(DRINKS):
+        cx = 68 + i * 89
+        sh = SHARE(d)
+        b.append(R(cx - 30, 366, 60, 12, 'edge', 1.25, rx=3))
+        b.append('<rect x="%.1f" y="366" width="%.1f" height="12" rx="3" fill="var(--focus)" fill-opacity="0.35" stroke="var(--focus)" stroke-width="1.5"/>' % (cx - 30, max(60 * sh, 2)))
+        b.append(T(cx, 396, '%d%%' % round(sh * 100), 11.5, 600, 'ink', 'middle'))
+    lx = 24
+    for k in ('espresso', 'milk', 'foam', 'water', 'chocolate'):
+        b.append('<rect x="%d" y="418" width="16" height="16" rx="3" fill="%s" stroke="%s" stroke-width="1"/>' % (lx, LAYER[k][0], LAYER[k][1]))
+        b.append(T(lx + 22, 431, NAMES[k], 11.5, 400, 'muted'))
+        lx += 22 + len(NAMES[k]) * 6.4 + 24
+    b.append(T(24, 460, 'cup height ∝ volume · typical café recipes, vary by shop', 11.5, 400, 'muted'))
+    return sv(470, title, 'Eight coffee drinks as glasses, height proportional to volume: espresso 30 ml (100% coffee), macchiato 45 ml (67%), cortado 60 ml (50%), flat white 170 ml with a double shot (35%), cappuccino 150 ml (20%), americano 150 ml with water (20%), mocha 210 ml with chocolate (14%), latte 245 ml (12%).', b, N.defs())
+
+
+def coffee_rank():
+    title = 'From strongest to mildest'
+    ds = sorted(DRINKS, key=lambda d: -SHARE(d))
+    b = [T(24, 62, 'ESPRESSO SHARE OF THE CUP, BARS FROM 0', 11.5, 600, 'muted')]
+    for i, d in enumerate(ds):
+        y = 80 + i * 26
+        sh = SHARE(d)
+        b.append(T(24, y + 11, d[0], 13, 600))
+        b.append(hbar(140, y, sh * 520, 'focus'))
+        b.append(T(140 + sh * 520 + 8, y + 11, '%d%%' % round(sh * 100), 11.5, 600))
+    b.append(T(24, 300, 'a flat white has a double shot, so it tastes stronger than a cappuccino', 11.5, 400, 'muted'))
+    return sv(310, title, 'Espresso share of the cup: espresso 100%, macchiato 67%, cortado 50%, flat white 35%, cappuccino 20%, americano 20%, mocha 14%, latte 12%.', b)
+
+
+EX.append(dict(
+    slug='coffee', kind='Comparison', question='What’s the difference between espresso, latte, macchiato and the rest?',
+    line='Almost all of them start with the same espresso; the milk, foam or water on top makes the drink.',
+    chat=[coffee_main()],
+    pdf=dict(title='Same espresso base, eight drinks: milk decides', subtitle='Eight coffee drinks compared', cards=[
+        dict(type='drawing', title='', data=[coffee_main()]),
+        dict(type='drawing', title='', data=[coffee_rank()]),
+        dict(type='table', title='Recipes', data=dict(columns=['Drink', 'Espresso', 'Milk', 'Foam', 'Other'], rows=[
+            [d[0]] + ['%d ml' % dict(d[1]).get(k) if dict(d[1]).get(k) else '—' for k in ('espresso', 'milk', 'foam')] +
+            [('%d ml water' % dict(d[1])['water']) if 'water' in dict(d[1]) else ('%d ml chocolate' % dict(d[1])['chocolate']) if 'chocolate' in dict(d[1]) else '—']
+            for d in DRINKS]))])))
 
 # =========================================================== build
 def main():

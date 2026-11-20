@@ -427,9 +427,9 @@ def diversity():
 
 
 # ---------------------------------------------------------------- the example
-PROMPT = ('Cell division: examine mitosis and meiosis. Explain the whole process in a more visual way, '
-          'with realistic pictures.')
-LINE = 'Mitosis makes two identical copies of a cell; meiosis divides twice and makes four eggs or sperm, each with half the chromosomes and a new mix.'
+PROMPT = ('Cell division: examine mitosis and meiosis. Explain the whole process in a more visual way, with realistic pictures. '
+          'Start with a very detailed drawing of a cell, then move on to division.')
+LINE = 'A cell is a nucleus surrounded by a dozen working parts. Mitosis makes two identical copies of a cell; meiosis divides twice and makes four eggs or sperm, each with half the chromosomes and a new mix.'
 
 STORY = '''**Where each happens.** Mitosis runs in almost every body cell: skin, gut lining and blood cells are replaced this way all the time. Meiosis happens only in the ovaries and testes, to make eggs and sperm.
 
@@ -439,19 +439,29 @@ STORY = '''**Where each happens.** Mitosis runs in almost every body cell: skin,
 
 
 def example():
-    ov = overview()
+    import ex_cell_anatomy as A
+    cell = A.anatomy()
     compare = [['Purpose', 'growth, repair, replacement', 'eggs and sperm'], ['Divisions', 'one', 'two'],
                ['Cells produced', '2', '4'], ['Chromosomes per cell', '46, same as the parent', '23, half'],
                ['Genetically', 'identical to the parent', 'all different'], ['Crossing over', 'no', 'yes, in prophase I'],
                ['Pairs line up', 'no, single chromosomes line up', 'yes, in metaphase I'], ['Where', 'almost all body cells', 'ovaries and testes']]
-    sources = ('- Alberts et al., *Molecular Biology of the Cell* (NCBI Bookshelf): a 24-hour human cycle with G1 ~11 h, S ~8 h, G2 ~4 h, M ~1 h.\n'
-               '- OpenStax *Biology 2e*, chapters 10 and 11: the cell cycle, mitosis and meiosis.\n'
+    parts = [['Nucleus', 'holds the DNA; the nucleolus inside builds ribosomes'], ['Rough ER', 'ribosome-studded sacs that fold new proteins'],
+             ['Smooth ER', 'makes lipids, stores calcium, breaks down toxins'], ['Golgi apparatus', 'modifies, sorts and packs proteins into vesicles'],
+             ['Mitochondria', 'turn food into ATP; they carry their own small DNA'], ['Lysosomes', 'digest worn-out parts and what the cell takes in'],
+             ['Peroxisomes', 'break down fatty acids and hydrogen peroxide'], ['Centrosome', 'organises microtubules and, in division, the spindle'],
+             ['Cytoskeleton', 'microtubules and actin give shape and move cargo'], ['Plasma membrane', 'lipid bilayer with proteins that control what passes']]
+    sources = ('- Alberts et al., *Molecular Biology of the Cell* (NCBI Bookshelf): organelles and their roles; a 24-hour human cycle with G1 ~11 h, S ~8 h, G2 ~4 h, M ~1 h.\n'
+               '- OpenStax *Biology 2e*, chapters 4, 10 and 11: cell structure, the cell cycle, mitosis and meiosis.\n'
+               '- BioNumbers (Harvard): typical sizes of cells, organelles, nuclear pores and ribosomes; durations of cell-cycle phases.\n'
                '- Embryo Project Encyclopedia (Arizona State University), *Meiosis in humans*: oocytes arrested in prophase I from before birth.\n'
                '- University of Minnesota, *Human Biology*, 5.2 *Meiosis*: 2²³ = 8,388,608 combinations from independent assortment.\n'
-               '- Nature Scitable, *Meiosis, genetic recombination and sexual reproduction*: chiasmata and crossing over, about two per chromosome pair in humans.\n'
-               '- BioNumbers (Harvard): duration of cell-cycle phases in human cells.')
-    pdf = dict(title='Cell division: mitosis and meiosis', subtitle='How one cell becomes two identical cells, or four unique eggs or sperm', cards=[
-        dict(type='drawing', title='', data=[ov]),
+               '- Nature Scitable, *Meiosis, genetic recombination and sexual reproduction*: chiasmata and crossing over, about two per chromosome pair in humans.')
+    pdf = dict(title='Inside a cell, and how it divides', subtitle='A detailed animal cell, then mitosis and meiosis step by step', cards=[
+        dict(type='drawing', title='', data=[cell]),
+        dict(type='table', title='What each part does', data=dict(columns=['Part', 'Job'], rows=parts)),
+        dict(type='drawing', title='', data=[A.closeups()]),
+        dict(type='drawing', title='', data=[A.scale()]),
+        dict(type='drawing', title='', data=[overview()]),
         dict(type='drawing', title='', data=[cycle()]),
         dict(type='drawing', title='', data=[mitosis()]),
         dict(type='drawing', title='', data=[meiosis()]),
@@ -460,5 +470,5 @@ def example():
         dict(type='table', title='Mitosis and meiosis side by side', data=dict(columns=['', 'Mitosis', 'Meiosis'], rows=compare)),
         dict(type='markdown', title='Where, how long, and why', data=STORY),
         dict(type='markdown', title='Sources', data=sources)])
-    return dict(slug='cell', kind='Research', title='Cell division: mitosis and meiosis', prompt=PROMPT, question=PROMPT, line=LINE,
-                chat=[ov], pdf=pdf, drawings=[c['data'][0] for c in pdf['cards'] if c['type'] == 'drawing'])
+    return dict(slug='cell', kind='Research', title='Inside a cell, and how it divides', prompt=PROMPT, question=PROMPT, line=LINE,
+                chat=[cell], pdf=pdf, drawings=[c['data'][0] for c in pdf['cards'] if c['type'] == 'drawing'])

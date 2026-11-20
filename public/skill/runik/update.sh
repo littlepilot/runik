@@ -45,9 +45,9 @@ else
     remote_version="$(printf '%s' "$remote" | sed -n 's/.*"version": *"\([^"]*\)".*/\1/p' | head -1)"
     if [ -n "$remote_version" ] && newer "$remote_version" "$local_version"; then
       if curl -fsSL --max-time 20 "$src/install.sh" 2> /dev/null | bash > "$STATE_DIR/update.log" 2>&1; then
-        echo "runik: updated $local_version → $remote_version"
+        installed="$(json_get version "$SKILL_DIR/version.json")"   # may be newer than a cached remote file
+        echo "runik: updated $local_version → ${installed:-$remote_version}"
         echo "ACTION: re-read SKILL.md and rules.md before drawing (they changed)"
-        local_version="$remote_version"
       else
         echo "runik: $local_version, update to $remote_version failed (see $STATE_DIR/update.log); using the installed version"
       fi

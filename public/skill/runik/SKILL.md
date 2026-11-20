@@ -1,6 +1,6 @@
 ---
 name: runik
-description: Runik visual answers. Explanations, comparisons, plans, architecture, processes and results are drawn as rule-based SVG drawings (or charts, tables, cards) on the Runik Board, a live artifact kept open beside the chat, instead of long text. Use before every reply that explains something, compares options, reports results or answers a question a picture could carry. Skip it for one-line confirmations and for replies that are only code, commands or file paths.
+description: Runik visual answers. Explanations, comparisons, plans, architecture, processes and results are drawn as rule-based SVG drawings (or charts, tables, cards) on the Runik Board, a live artifact kept open beside the chat, instead of long text. Use before every reply that explains something, compares options, reports results or answers a question a picture could carry, and whenever the user asks for an answer or result as a PDF (Runik PDF). Skip it for one-line confirmations and for replies that are only code, commands or file paths.
 ---
 
 # Runik
@@ -14,6 +14,8 @@ Everything Runik needs ships in this skill's folder (the folder holding this fil
 | `rules.md` | Drawing rules: canvas, type, color, components, patterns. Read before drawing. |
 | `runik-lint.js` | Checks drawings before delivery (needs Playwright). |
 | `purify.min.js` | DOMPurify, used by the lint exactly as the board uses it. |
+| `pdf.md` | Runik PDF: how to turn answers into an A4 PDF when the user asks for one. |
+| `runik_pdf.py`, `*.woff2` | The PDF renderer (Python 3 + Chrome/Chromium) and the fonts it embeds. |
 | `runik_object.py` | Helpers for shaded, natural-color drawings of real objects (§4b of the rules). |
 | `example_object.py`, `example_geo.json` | A full object drawing example and its map data. |
 | `board.html` | The Runik Board artifact page. |
@@ -99,6 +101,10 @@ node <skill folder>/runik-lint.js card.json
 ## 5. The chat
 
 Write at most one line in the chat, in the user's language: `→ <"on the board" in the user's language>: <title>` (Turkish: `→ panoda: <başlık>`). Things that must be exact (code, commands, links, file paths) stay in the chat. If a decision is needed, ask the question in the chat in one line and show the options on the board.
+
+## 6. PDF on request
+
+When the user asks for an answer, a result or the conversation as a PDF (in any wording, in any language), read `pdf.md` and follow it: the cards go into a document JSON and `runik_pdf.py` renders it. Deliver the file path in the chat in one line; the board needs no card for it.
 
 ## Updating
 

@@ -11,7 +11,7 @@ const errors = [];
 const html = readFileSync(join(pub, 'index.html'), 'utf8');
 
 // 1. placeholders
-for (const f of ['index.html', 'install.txt', 'install.md', 'install.sh', 'skill/runik/SKILL.md'])
+for (const f of ['index.html', 'install.txt', 'install.md', 'install.sh', 'start.md', 'skill/runik/SKILL.md'])
   if (/__(SITE|GH)__/.test(readFileSync(join(pub, f), 'utf8'))) errors.push(`${f}: __SITE__/__GH__ not filled in`);
 
 // 2. drawing rules

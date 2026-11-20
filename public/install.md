@@ -33,9 +33,10 @@ ArtifactData `set` on the board's `cards` collection. doc_id: `k-<YYYYMMDD-HHMMS
 
 ## 4. One message to the user
 
-In the user's language, at most three lines:
+In the user's language, at most four lines:
 - The board link and a suggestion to keep it open beside the chat.
 - Runik now works in every project; new sessions pick up the `runik` skill automatically.
+- Any answer can be asked for as a PDF ("give me this as a PDF").
 - Optional: the `Runik` output style can be turned on with `/output-style` to keep chat replies short.
 
 Offer once to pin the board; if the user says yes, pin it with Artifact `pin`.

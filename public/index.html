@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Runik · Don’t let Claude tell. Let it show.</title>
-<meta name="description" content="A visual answer language for Claude Code. Rule-based drawings instead of long text; installs once as a global skill and works in every project.">
+<meta name="description" content="A visual answer language for AI agents. Rule-based drawings instead of long text, and any answer as a PDF. One line: Claude Code installs it, other agents use it right away.">
 <meta property="og:title" content="Runik · Don’t let Claude tell. Let it show.">
-<meta property="og:description" content="A visual answer language for Claude Code. One prompt installs it in every project.">
+<meta property="og:description" content="A visual answer language for AI agents. Paste one line into any agent.">
 <meta name="theme-color" content="#f3f4f7" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#101319" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -45,7 +45,11 @@ nav a{text-decoration:none}nav a:hover{color:var(--fg)}
 h1{font:700 clamp(40px,7vw,76px)/1.02 var(--display);letter-spacing:-.035em;margin:0 0 20px;max-width:12ch}
 h1 em{font-style:normal;color:var(--focus)}
 .lead{font-size:19px;color:var(--muted);max-width:44ch;margin:0 0 30px}
-.cta{display:flex;gap:12px;flex-wrap:wrap}
+.line{display:flex;align-items:center;gap:8px;max-width:760px;background:var(--surface);border:1.5px solid var(--focus);border-radius:12px;padding:8px 8px 8px 16px}
+.line code{flex:1;min-width:0;font:14px/1.5 var(--mono);overflow-x:auto;white-space:nowrap;scrollbar-width:none}
+.line code::-webkit-scrollbar{display:none}
+.line .btn{flex:none;padding:9px 14px;font-size:13.5px}
+.hint{font-size:14px;color:var(--muted);margin:12px 0 0}
 section{padding:56px 0}
 .eyebrow{font:600 12.5px/1 var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 14px}
 h2{font:700 clamp(26px,3.6vw,38px)/1.1 var(--display);letter-spacing:-.025em;margin:0 0 28px;max-width:22ch}
@@ -63,8 +67,6 @@ h2{font:700 clamp(26px,3.6vw,38px)/1.1 var(--display);letter-spacing:-.025em;mar
 .gal figure{margin:0}
 .gal figcaption{font-size:13px;color:var(--muted);margin:10px 4px 0}
 .kur{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;max-width:820px}
-.prompt{position:relative;background:var(--surface);border:1.5px solid var(--focus);border-radius:14px;padding:22px 22px 22px;font:14px/1.65 var(--mono);white-space:pre-wrap;word-break:break-word;margin:0}
-.copy{position:absolute;top:12px;right:12px;padding:9px 14px;font-size:13.5px}
 .steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
 .step{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:14px}
 .step b{display:block;font:600 14px/1.3 var(--body);margin-bottom:2px}
@@ -95,13 +97,14 @@ code.inline{font:13.5px var(--mono);background:var(--tint);padding:2px 6px;borde
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="1" y="1" width="30" height="30" rx="8" fill="var(--fg)"/><path d="M11 25V7l9 5-9 5 10 8" fill="none" stroke="var(--bg)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
     Runik
   </a>
-  <nav><a href="#how">How</a><a href="#examples">Examples</a><a href="#releases">Releases</a><a href="https://github.com/littlepilot/runik">GitHub</a><a class="btn" href="#install" style="padding:9px 14px;font-size:14px">Install</a></nav>
+  <nav><a href="#how">How</a><a href="#examples">Examples</a><a href="#releases">Releases</a><a href="https://github.com/littlepilot/runik">GitHub</a><a class="btn" href="#install" style="padding:9px 14px;font-size:14px">Get started</a></nav>
 </header>
 
 <div class="hero">
   <h1>Don’t let Claude tell. <em>Let it show.</em></h1>
-  <p class="lead">A visual answer language for Claude Code. One prompt installs it as a global skill; it works in every project, in your language.</p>
-  <div class="cta"><a class="btn" href="#install">Get the install prompt</a><a class="btn ghost" href="#examples">See examples</a></div>
+  <p class="lead">A visual answer language for AI agents. Copy one line into Claude Code, Claude, ChatGPT or any agent: it installs where it can and works right away everywhere else. Ask for any answer as a PDF.</p>
+  <div class="line"><code id="line">Runik: read https://runik.littleman.workers.dev/start.md and follow it.</code><button class="btn" id="copy" type="button">Copy</button></div>
+  <p class="hint">Paste it into your agent. In your language, in every answer. <a href="#install">What happens next</a> · <a href="#examples">Examples</a></p>
 </div>
 
 <section id="compare" aria-labelledby="compare-h">
@@ -143,23 +146,15 @@ code.inline{font:13.5px var(--mono);background:var(--tint);padding:2px 6px;borde
 
 <section id="install" aria-labelledby="install-h">
   <p class="eyebrow">Install</p>
-  <h2 id="install-h">Copy it, paste it into Claude Code</h2>
+  <h2 id="install-h">One line, any agent</h2>
   <div class="kur">
-    <div style="position:relative">
-<pre class="prompt" id="prompt">Install Runik as a global Claude Code skill (Runik: answers are drawn as rule-based visuals on a board beside the chat instead of long text).
-
-Install steps: https://runik.littleman.workers.dev/install.md
-If that doesn&#x27;t open: https://raw.githubusercontent.com/littlepilot/runik/main/public/install.md
-
-Download the file with curl, read it and follow the steps in order. When done, show me only the board link.</pre>
-      <button class="btn copy" id="copy" type="button">Copy</button>
-    </div>
+    <div class="line"><code id="line2">Runik: read https://runik.littleman.workers.dev/start.md and follow it.</code><button class="btn" id="copy2" type="button">Copy</button></div>
     <div class="steps">
-      <div class="step"><b>1 · Paste</b><span>Claude installs the skill</span></div>
-      <div class="step"><b>2 · Board</b><span>Keep it open beside the chat</span></div>
-      <div class="step"><b>3 · Update</b><span>Automatic, once a day</span></div>
+      <div class="step"><b>Claude Code</b><span>Installs a global skill and a live board beside the chat; updates itself daily</span></div>
+      <div class="step"><b>Any other agent</b><span>Claude, ChatGPT, Gemini: draws Runik answers right away in that chat</span></div>
+      <div class="step"><b>PDF</b><span>Ask “give me this as a PDF”: the same drawings on A4 pages</span></div>
     </div>
-    <p style="font-size:13.5px;color:var(--muted);margin:4px 0 0">From a terminal: <code class="inline">curl -fsSL https://runik.littleman.workers.dev/install.sh | bash</code><br>Raw prompt: <a href="/install.txt">/install.txt</a> · Steps Claude follows: <a href="/install.md">/install.md</a> · Rules: <a href="/skill/runik/rules.md">rules.md</a> · Installer: <a href="/install.sh">/install.sh</a></p>
+    <p style="font-size:13.5px;color:var(--muted);margin:4px 0 0">From a terminal: <code class="inline">curl -fsSL https://runik.littleman.workers.dev/install.sh | bash</code><br>Raw line: <a href="/install.txt">/install.txt</a> · What the agent reads: <a href="/start.md">/start.md</a> · Claude Code steps: <a href="/install.md">/install.md</a> · Rules: <a href="/skill/runik/rules.md">rules.md</a> · Installer: <a href="/install.sh">/install.sh</a></p>
   </div>
 </section>
 
@@ -167,6 +162,7 @@ Download the file with curl, read it and follow the steps in order. When done, s
   <p class="eyebrow">Release notes</p>
   <h2 id="releases-h">What changed</h2>
   <ul class="notes">
+    <li><code>0.7.0</code><time datetime="2026-11-20">2026-11-20</time><span>One line for any agent (start.md): Claude Code installs, other chat agents use Runik right away; any answer as a Runik PDF (runik_pdf.py)</span></li>
     <li><code>0.6.0</code><time datetime="2026-11-20">2026-11-20</time><span>Automatic updates: update.sh checks once a day, installs new versions and tells Claude what to do (re-read rules, republish or create the board)</span></li>
     <li><code>0.5.1</code><time datetime="2026-11-20">2026-11-20</time><span>Everything Runik produces is in the user&#x27;s language (drawings, cards, chat line); board UI follows the browser language (English, Turkish)</span></li>
     <li><code>0.5.0</code><time datetime="2026-11-20">2026-11-20</time><span>English everywhere and a single global skill (~/.claude/skills/runik): rules, tools and board ship inside the skill; one board for all projects</span></li>
@@ -177,10 +173,10 @@ Download the file with curl, read it and follow the steps in order. When done, s
   </ul>
 </section>
 
-<footer><span>Runik 0.6.0</span><a href="https://github.com/littlepilot/runik">GitHub</a><a href="/skill/runik/version.json">version.json</a></footer>
+<footer><span>Runik 0.7.0</span><a href="https://github.com/littlepilot/runik">GitHub</a><a href="/skill/runik/version.json">version.json</a></footer>
 </div>
 <script>
-document.getElementById('copy').addEventListener('click',async e=>{const b=e.currentTarget,t=document.getElementById('prompt').textContent;try{await navigator.clipboard.writeText(t)}catch{const r=document.createRange();r.selectNodeContents(document.getElementById('prompt'));const s=getSelection();s.removeAllRanges();s.addRange(r);document.execCommand('copy')}b.textContent='Copied ✓';setTimeout(()=>b.textContent='Copy',1800)});
+[['copy','line'],['copy2','line2']].forEach(([c,l])=>document.getElementById(c).addEventListener('click',async e=>{const b=e.currentTarget,el=document.getElementById(l),t=el.textContent;try{await navigator.clipboard.writeText(t)}catch{const r=document.createRange();r.selectNodeContents(el);const s=getSelection();s.removeAllRanges();s.addRange(r);document.execCommand('copy')}b.textContent='Copied ✓';setTimeout(()=>b.textContent='Copy',1800)}));
 </script>
 </body>
 </html>

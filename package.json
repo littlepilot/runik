@@ -1,10 +1,10 @@
 {
   "name": "runik",
   "private": true,
-  "description": "Visual answer language for Claude Code: landing page, installer and the global runik skill",
+  "description": "Visual answer language for AI agents: landing page, one-line start, installer, the global runik skill and the Runik PDF renderer",
   "scripts": {
     "install-skill": "bash public/install.sh",
-    "page": "python3 scripts/drawings.py && python3 scripts/page.py",
+    "page": "python3 scripts/drawings.py && python3 scripts/page.py && python3 scripts/start.py",
     "check": "node scripts/check.mjs",
     "dev": "wrangler dev",
     "deploy": "wrangler deploy"

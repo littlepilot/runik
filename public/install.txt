@@ -1,6 +1,1 @@
-Install Runik as a global Claude Code skill (Runik: answers are drawn as rule-based visuals on a board beside the chat instead of long text).
-
-Install steps: https://runik.littleman.workers.dev/install.md
-If that doesn't open: https://raw.githubusercontent.com/littlepilot/runik/main/public/install.md
-
-Download the file with curl, read it and follow the steps in order. When done, show me only the board link.
+Runik: read https://runik.littleman.workers.dev/start.md and follow it.

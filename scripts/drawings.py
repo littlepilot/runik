@@ -98,5 +98,27 @@ out['nasil'] = sv(430, 'One line, and any agent answers in Runik',
                   'Copy one line and paste it into any agent. If it can install (Claude Code), it adds the skill and a live board to every project and updates daily; any other agent (Claude, ChatGPT, Gemini) draws Runik answers in that chat. Ask for any answer as a PDF: A4 pages with the same drawings, in your language.',
                   b)
 
+# ===== SPEED: time to the main idea, usual answer vs Runik (row table with scale bars)
+b = []
+X0, S = 200, 536 / 36  # axis: 0 to 36 s
+for y, c, name, detail, sec, mark in ((60, 'bad', 'Usual answer', '141 words', 35, '✗ ~35 s'),
+                                      (108, 'good', 'Runik answer', '1 drawing', 3, '✓ ~3 s')):
+    b.append(dot(30, y + 4, 6, c))
+    b += [T(44, y + 8, name, 13, 600), T(44, y + 26, detail, 11.5, 400, 'muted')]
+    w = sec * S
+    b.append(R(X0, y - 3, round(w, 1), 14, c, 1.5, c, 0.18, rx=3))
+    if X0 + w + 70 > 736:
+        b.append(T(round(X0 + w - 10, 1), y + 8, mark, 11.5, 600, 'ink', 'end'))
+    else:
+        b.append(T(round(X0 + w + 10, 1), y + 8, mark, 11.5, 600, c))
+b.append(L(X0, 142, 736, 142, 'edge', 1.25))
+for s_ in (0, 10, 20, 30):
+    x = round(X0 + s_ * S, 1)
+    b += [L(x, 142, x, 147, 'edge', 1.25), T(x, 162, '%d s' % s_, 11.5, 400, 'muted', 'middle' if s_ else None)]
+b.append(T(24, 190, 'seconds to the main idea · reading at ~240 words a minute', 11.5, 400, 'muted'))
+out['speed'] = sv(200, 'The main idea in 3 seconds, not 35',
+                  'Time to the main idea: the usual answer is 141 words, about 35 seconds at 240 words a minute; the Runik answer is one drawing, about 3 seconds.',
+                  b)
+
 json.dump(out, open(os.path.join(K, 'drawings.json'), 'w'), ensure_ascii=False)
 print(list(out))

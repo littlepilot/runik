@@ -18,7 +18,11 @@ t = t.replace('{{examples}}', '\n'.join(
     </article>''' for e in ex))
 t = t.replace('{{prompt}}', html.escape(open(os.path.join(P, 'install.txt'), encoding='utf-8').read().strip()))
 s = json.load(open(os.path.join(P, 'skill', 'runik', 'version.json'), encoding='utf-8'))
-notes = '\n'.join(f'    <li><code>{n["version"]}</code><time datetime="{n["date"]}">{n["date"]}</time><span>{html.escape(n["summary"])}</span></li>' for n in s['notes'])
+li = lambda n: f'    <li><code>{n["version"]}</code><time datetime="{n["date"]}">{n["date"]}</time><span>{html.escape(n["summary"])}</span></li>'
+ul = lambda ns: '  <ul class="notes">\n%s\n  </ul>' % '\n'.join(li(n) for n in ns)
+notes = ul(s['notes'][:3])
+if len(s['notes']) > 3:
+    notes += '\n  <details class="more"><summary>Earlier releases · %d</summary>\n%s\n  </details>' % (len(s['notes']) - 3, ul(s['notes'][3:]))
 t = t.replace('{{notes}}', notes).replace('__VERSION__', s['version'])
 assert '{{' not in t, 'unfilled placeholder'
 open(os.path.join(P, 'index.html'), 'w', encoding='utf-8').write(t)

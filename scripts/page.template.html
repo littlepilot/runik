@@ -41,10 +41,10 @@ nav a{text-decoration:none}nav a:hover{color:var(--fg)}
 .btn{display:inline-flex;align-items:center;gap:8px;background:var(--fg);color:var(--bg);font:600 15px/1 var(--body);padding:13px 20px;border-radius:10px;text-decoration:none;border:0;cursor:pointer}
 .btn:hover{opacity:.88}
 .btn.ghost{background:transparent;color:var(--fg);box-shadow:inset 0 0 0 1.5px var(--line)}
-.hero{padding:72px 0 40px}
-h1{font:700 clamp(40px,7vw,76px)/1.02 var(--display);letter-spacing:-.035em;margin:0 0 20px;max-width:12ch}
+.hero{padding:64px 0 8px}
+h1{font:700 clamp(40px,7.4vw,84px)/1 var(--display);letter-spacing:-.04em;margin:0 0 22px}
 h1 em{font-style:normal;color:var(--focus)}
-.lead{font-size:19px;color:var(--muted);max-width:44ch;margin:0 0 30px}
+.lead{font-size:20px;color:var(--muted);max-width:44ch;margin:0 0 28px}
 .line{display:flex;align-items:center;gap:8px;max-width:760px;background:var(--surface);border:1.5px solid var(--focus);border-radius:12px;padding:8px 8px 8px 16px}
 .line code{flex:1;min-width:0;font:14px/1.5 var(--mono);overflow-x:auto;white-space:nowrap;scrollbar-width:none}
 .line code::-webkit-scrollbar{display:none}
@@ -60,8 +60,9 @@ h2{font:700 clamp(26px,3.6vw,38px)/1.1 var(--display);letter-spacing:-.025em;mar
 .prose{font-size:14.5px;line-height:1.7;color:var(--muted);position:relative;max-height:420px;overflow:hidden}
 .prose p{margin:0 0 12px}
 .prose:after{content:"";position:absolute;left:0;right:0;bottom:0;height:90px;background:linear-gradient(transparent,var(--surface))}
-.meter{display:flex;gap:18px;margin-top:14px;font-size:13px;color:var(--muted)}
-.meter b{font:600 22px/1 var(--display);color:var(--fg);display:block;margin-bottom:4px}
+#compare{padding-top:40px}
+.vs+.panel{margin-top:20px}
+.vs .panel:first-child .prose{font-size:13.5px}
 .fig{max-width:820px}
 .gal{display:grid;gap:20px}
 .gal figure{margin:0}
@@ -80,10 +81,15 @@ h2{font:700 clamp(26px,3.6vw,38px)/1.1 var(--display);letter-spacing:-.025em;mar
 .pdf b{font-weight:600;color:var(--fg)}
 .kur{display:grid;grid-template-columns:minmax(0,1fr);gap:16px;max-width:820px}
 .steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
-.step{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:14px}
+.step{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;font-size:14px;display:grid;grid-template-columns:32px minmax(0,1fr);gap:4px 14px;align-items:start}
+.step svg{width:32px;height:32px;grid-row:span 2}
 .step b{display:block;font:600 14px/1.3 var(--body);margin-bottom:2px}
 .step span{color:var(--muted);font-size:13px}
 .notes{list-style:none;margin:0;padding:0;max-width:820px}
+details.more{max-width:820px}
+details.more summary{cursor:pointer;color:var(--muted);font-size:14px;padding:12px 0;border-top:1px solid var(--line);list-style:none}
+details.more summary::-webkit-details-marker{display:none}
+details.more[open] summary{display:none}
 .notes li{display:grid;grid-template-columns:80px 110px minmax(0,1fr);gap:12px;padding:12px 0;border-top:1px solid var(--line);font-size:14.5px}
 .notes code{font:600 13.5px var(--mono)}
 .notes time{color:var(--muted);font-size:13.5px}
@@ -100,7 +106,11 @@ code.inline{font:13.5px var(--mono);background:var(--tint);padding:2px 6px;borde
   .hero{padding:40px 0 20px}
   section{padding:40px 0}
   .panel{padding:12px}
-  .notes li{grid-template-columns:64px minmax(0,1fr)}.notes time{display:none}
+  details.more{max-width:820px}
+details.more summary{cursor:pointer;color:var(--muted);font-size:14px;padding:12px 0;border-top:1px solid var(--line);list-style:none}
+details.more summary::-webkit-details-marker{display:none}
+details.more[open] summary{display:none}
+.notes li{grid-template-columns:64px minmax(0,1fr)}.notes time{display:none}
   .panel{overflow-x:auto;-webkit-overflow-scrolling:touch}.panel>svg,.panel figure>svg,figure.panel>svg,.reply svg{min-width:640px}
   .reply{overflow-x:auto}
 }
@@ -117,10 +127,10 @@ code.inline{font:13.5px var(--mono);background:var(--tint);padding:2px 6px;borde
 </header>
 
 <div class="hero">
-  <h1>Don’t let Claude tell. <em>Let it show.</em></h1>
-  <p class="lead">A visual answer language for AI agents. Copy one line into Claude Code, Claude, ChatGPT or any agent: it installs where it can and works right away everywhere else. Ask for any answer as a PDF.</p>
+  <h1>Don’t let Claude tell.<br><em>Let it show.</em></h1>
+  <p class="lead">Agents answer in walls of text. Runik makes them draw.</p>
   <div class="line"><code id="line">{{prompt}}</code><button class="btn" id="copy" type="button">Copy</button></div>
-  <p class="hint">Paste it into your agent. In your language, in every answer. <a href="#install">What happens next</a> · <a href="#examples">Examples</a></p>
+  <p class="hint">Paste it into Claude Code, Claude, ChatGPT or any agent · <a href="#install">What happens next</a></p>
 </div>
 
 <section id="compare" aria-labelledby="compare-h">
@@ -134,14 +144,13 @@ code.inline{font:13.5px var(--mono);background:var(--tint);padding:2px 6px;borde
         <p>The L2 cache is a little larger, with an access time of around four nanoseconds. L3 is shared between cores and takes about fifteen nanoseconds. When the data has to come from main memory, RAM, latency climbs to a hundred nanoseconds, roughly a hundred times slower than L1. Reading from an SSD takes microseconds, roughly a hundred thousand times longer than L1.</p>
         <p>So for performance, what matters most is keeping frequently used data in the layers close to the processor. Walking an array in order uses cache lines efficiently…</p>
       </div>
-      <div class="meter"><div><b>141</b>words</div><div><b>~35 s</b>to read</div></div>
     </div>
     <div class="panel">
       <div class="tag"><i style="background:var(--focus)"></i>The Runik answer</div>
       {{hero}}
-      <div class="meter"><div><b>3 s</b>to the main idea</div></div>
     </div>
   </div>
+  <div class="panel fig">{{speed}}</div>
 </section>
 
 <section id="how" aria-labelledby="how-h">
@@ -164,9 +173,9 @@ code.inline{font:13.5px var(--mono);background:var(--tint);padding:2px 6px;borde
   <div class="kur">
     <div class="line"><code id="line2">{{prompt}}</code><button class="btn" id="copy2" type="button">Copy</button></div>
     <div class="steps">
-      <div class="step"><b>Claude Code</b><span>Installs a global skill and a live board beside the chat; updates itself daily</span></div>
-      <div class="step"><b>Any other agent</b><span>Claude, ChatGPT, Gemini: draws Runik answers right away in that chat</span></div>
-      <div class="step"><b>PDF</b><span>Ask “give me this as a PDF”: the same drawings on A4 pages</span></div>
+      <div class="step"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="6" width="26" height="20" rx="4" fill="none" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 13l4 3-4 3M16 20h7" fill="none" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><b>Claude Code</b><span>Skill + live board · updates daily</span></div>
+      <div class="step"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M7 6h18a4 4 0 0 1 4 4v9a4 4 0 0 1-4 4H14l-6 5v-5H7a4 4 0 0 1-4-4v-9a4 4 0 0 1 4-4z" fill="none" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 17l4-5 3 3 3-4 4 6" fill="none" stroke="var(--focus)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></svg><b>Any other agent</b><span>Claude, ChatGPT, Gemini · in that chat</span></div>
+      <div class="step"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M7 3h13l6 6v20H7z M20 3v6h6" fill="none" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M11 14h11" stroke="var(--focus)" stroke-width="2" stroke-linecap="round"/><path d="M11 19h11M11 24h7" fill="none" stroke="var(--ink)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><b>PDF</b><span>“give me this as a PDF” · A4</span></div>
     </div>
     <p style="font-size:13.5px;color:var(--muted);margin:4px 0 0">From a terminal: <code class="inline">curl -fsSL https://runik.littleman.workers.dev/install.sh | bash</code><br>Raw line: <a href="/install.txt">/install.txt</a> · What the agent reads: <a href="/start.md">/start.md</a> · Claude Code steps: <a href="/install.md">/install.md</a> · Rules: <a href="/skill/runik/rules.md">rules.md</a> · Installer: <a href="/install.sh">/install.sh</a></p>
   </div>
@@ -175,9 +184,7 @@ code.inline{font:13.5px var(--mono);background:var(--tint);padding:2px 6px;borde
 <section id="releases" aria-labelledby="releases-h">
   <p class="eyebrow">Release notes</p>
   <h2 id="releases-h">What changed</h2>
-  <ul class="notes">
 {{notes}}
-  </ul>
 </section>
 
 <footer><span>Runik __VERSION__</span><a href="https://github.com/littlepilot/runik">GitHub</a><a href="/skill/runik/version.json">version.json</a><span class="by">Made by <a href="https://github.com/ahmetnavruz">@ahmetnavruz</a> and <a href="https://github.com/littlepilot">@littlepilot</a></span></footer>

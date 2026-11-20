@@ -1,10 +1,10 @@
-name: kontrol ve yayın
+name: check and deploy
 on:
   push:
     branches: [main]
   pull_request:
 jobs:
-  kontrol:
+  check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -12,21 +12,21 @@ jobs:
         with: { node-version: 22, cache: npm }
       - run: npm ci
       - run: npx playwright install --with-deps chromium
-      - run: npm run kontrol
+      - run: npm run check
       - uses: actions/upload-artifact@v4
         if: always()
-        with: { name: ekran, path: ekran/*.png }
-  yayin:
-    needs: kontrol
+        with: { name: screenshots, path: screenshots/*.png }
+  deploy:
+    needs: check
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: token var mı
+      - name: token present?
         id: t
-        run: echo "var=${{ secrets.CLOUDFLARE_API_TOKEN != '' }}" >> "$GITHUB_OUTPUT"
+        run: echo "present=${{ secrets.CLOUDFLARE_API_TOKEN != '' }}" >> "$GITHUB_OUTPUT"
       - uses: cloudflare/wrangler-action@v3
-        if: steps.t.outputs.var == 'true'
+        if: steps.t.outputs.present == 'true'
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

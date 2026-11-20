@@ -1,12 +1,12 @@
 <!doctype html>
-<html lang="tr">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Runik · Claude anlatmasın, göstersin</title>
-<meta name="description" content="Claude Code için görsel cevap dili. Uzun metin yerine kurallı çizimler; tek prompt ile kurulur, hep güncel kalır.">
-<meta property="og:title" content="Runik · Claude anlatmasın, göstersin">
-<meta property="og:description" content="Claude Code için görsel cevap dili. Tek prompt ile kurulur, hep güncel kalır.">
+<title>Runik · Don’t let Claude tell. Let it show.</title>
+<meta name="description" content="A visual answer language for Claude Code. Rule-based drawings instead of long text; installs once as a global skill and works in every project.">
+<meta property="og:title" content="Runik · Don’t let Claude tell. Let it show.">
+<meta property="og:description" content="A visual answer language for Claude Code. One prompt installs it in every project.">
 <meta name="theme-color" content="#f3f4f7" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#101319" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -91,85 +91,85 @@ code.inline{font:13.5px var(--mono);background:var(--tint);padding:2px 6px;borde
 <body>
 <div class="wrap">
 <header>
-  <a class="logo" href="/" aria-label="Runik ana sayfa">
+  <a class="logo" href="/" aria-label="Runik home">
     <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="1" y="1" width="30" height="30" rx="8" fill="var(--fg)"/><path d="M11 25V7l9 5-9 5 10 8" fill="none" stroke="var(--bg)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
     Runik
   </a>
-  <nav><a href="#nasil">Nasıl</a><a href="#ornekler">Örnekler</a><a href="#surumler">Sürümler</a><a href="https://github.com/littlepilot/runik">GitHub</a><a class="btn" href="#kur" style="padding:9px 14px;font-size:14px">Kur</a></nav>
+  <nav><a href="#how">How</a><a href="#examples">Examples</a><a href="#releases">Releases</a><a href="https://github.com/littlepilot/runik">GitHub</a><a class="btn" href="#install" style="padding:9px 14px;font-size:14px">Install</a></nav>
 </header>
 
 <div class="hero">
-  <h1>Claude anlatmasın, <em>göstersin.</em></h1>
-  <p class="lead">Claude Code için görsel cevap dili. Tek prompt ile kurulur, her thread’de en güncel haliyle çalışır.</p>
-  <div class="cta"><a class="btn" href="#kur">Kurulum prompt’unu al</a><a class="btn ghost" href="#ornekler">Örneklere bak</a></div>
+  <h1>Don’t let Claude tell. <em>Let it show.</em></h1>
+  <p class="lead">A visual answer language for Claude Code. One prompt installs it as a global skill; it works in every project, in your language.</p>
+  <div class="cta"><a class="btn" href="#install">Get the install prompt</a><a class="btn ghost" href="#examples">See examples</a></div>
 </div>
 
-<section id="fark" aria-labelledby="fark-b">
-  <p class="eyebrow">Aynı soru · iki cevap</p>
-  <h2 id="fark-b">“RAM’den okumak neden yavaş?”</h2>
+<section id="compare" aria-labelledby="compare-h">
+  <p class="eyebrow">Same question · two answers</p>
+  <h2 id="compare-h">“Why is reading from RAM slow?”</h2>
   <div class="vs">
     <div class="panel">
-      <div class="tag"><i style="background:var(--edge)"></i>Alışılmış cevap</div>
+      <div class="tag"><i style="background:var(--edge)"></i>The usual answer</div>
       <div class="prose">
-        <p>Bunun temel nedeni bellek hiyerarşisidir. İşlemci, verilere farklı uzaklıktaki katmanlardan erişir ve her katmanın gecikmesi bir öncekinden belirgin biçimde fazladır. En yakın katman olan L1 önbelleği çekirdeğin içinde bulunur ve yaklaşık bir nanosaniyede yanıt verir; ancak kapasitesi yalnızca birkaç on kilobayttır.</p>
-        <p>L2 önbelleği biraz daha büyüktür ve erişim süresi dört nanosaniye civarındadır. L3 ise çekirdekler arasında paylaşılır, on beş nanosaniye kadar sürer. Ana belleğe, yani RAM’e gitmek gerektiğinde gecikme yüz nanosaniyeye çıkar; bu, L1’e göre yaklaşık yüz kat daha yavaştır. SSD’den okuma ise mikrosaniyeler mertebesindedir ve L1’den kabaca yüz bin kat daha uzun sürer.</p>
-        <p>Bu nedenle performans açısından en önemli şey, sık kullanılan verinin işlemciye yakın katmanlarda kalmasını sağlamaktır. Diziyi sırayla gezmek, önbellek satırlarını verimli kullanır…</p>
+        <p>The main reason is the memory hierarchy. The processor reaches data through layers at different distances, and each layer is noticeably slower than the one before it. The closest layer, the L1 cache, sits inside the core and answers in about one nanosecond, but it holds only a few tens of kilobytes.</p>
+        <p>The L2 cache is a little larger, with an access time of around four nanoseconds. L3 is shared between cores and takes about fifteen nanoseconds. When the data has to come from main memory, RAM, latency climbs to a hundred nanoseconds, roughly a hundred times slower than L1. Reading from an SSD takes microseconds, roughly a hundred thousand times longer than L1.</p>
+        <p>So for performance, what matters most is keeping frequently used data in the layers close to the processor. Walking an array in order uses cache lines efficiently…</p>
       </div>
-      <div class="meter"><div><b>116</b>kelime</div><div><b>~35 sn</b>okuma</div></div>
+      <div class="meter"><div><b>141</b>words</div><div><b>~35 s</b>to read</div></div>
     </div>
     <div class="panel">
-      <div class="tag"><i style="background:var(--focus)"></i>Runik cevabı</div>
+      <div class="tag"><i style="background:var(--focus)"></i>The Runik answer</div>
       {{hero}}
-      <div class="meter"><div><b>3 sn</b>ana fikir</div></div>
+      <div class="meter"><div><b>3 s</b>to the main idea</div></div>
     </div>
   </div>
 </section>
 
-<section id="nasil" aria-labelledby="nasil-b">
-  <p class="eyebrow">Nasıl çalışır</p>
-  <h2 id="nasil-b">Bir kez kur, gerisini unut</h2>
+<section id="how" aria-labelledby="how-h">
+  <p class="eyebrow">How it works</p>
+  <h2 id="how-h">Install once, forget about it</h2>
   <div class="panel fig">{{nasil}}</div>
 </section>
 
-<section id="ornekler" aria-labelledby="ornek-b">
-  <p class="eyebrow">Örnekler</p>
-  <h2 id="ornek-b">Her cevap aynı dille çizilir</h2>
+<section id="examples" aria-labelledby="examples-h">
+  <p class="eyebrow">Examples</p>
+  <h2 id="examples-h">Every answer is drawn in the same language</h2>
   <div class="gal fig">
-    <figure class="panel">{{git}}<figcaption>Kavram · iki senaryo yan yana</figcaption></figure>
-    <figure class="panel">{{sorgu}}<figcaption>Hata ayıklama · karar zinciri ve ölçek</figcaption></figure>
-    <figure class="panel">{{pr}}<figcaption>Kod inceleme · satır tablosu</figcaption></figure>
+    <figure class="panel">{{git}}<figcaption>Concept · two scenarios side by side</figcaption></figure>
+    <figure class="panel">{{sorgu}}<figcaption>Debugging · decision chain and scale</figcaption></figure>
+    <figure class="panel">{{pr}}<figcaption>Code review · row table</figcaption></figure>
   </div>
 </section>
 
-<section id="kur" aria-labelledby="kur-b">
-  <p class="eyebrow">Kurulum</p>
-  <h2 id="kur-b">Kopyala, Claude Code projene yapıştır</h2>
+<section id="install" aria-labelledby="install-h">
+  <p class="eyebrow">Install</p>
+  <h2 id="install-h">Copy it, paste it into Claude Code</h2>
   <div class="kur">
     <div style="position:relative">
 <pre class="prompt" id="prompt">{{prompt}}</pre>
-      <button class="btn copy" id="kopyala" type="button">Kopyala</button>
+      <button class="btn copy" id="copy" type="button">Copy</button>
     </div>
     <div class="steps">
-      <div class="step"><b>1 · Skill kartı</b><span>Kaydet’e bas</span></div>
-      <div class="step"><b>2 · Pano</b><span>Yan ekranda açık tut</span></div>
-      <div class="step"><b>3 · Güncelleme</b><span>Kendiliğinden</span></div>
+      <div class="step"><b>1 · Paste</b><span>Claude installs the skill</span></div>
+      <div class="step"><b>2 · Board</b><span>Keep it open beside the chat</span></div>
+      <div class="step"><b>3 · Update</b><span>Rerun the installer</span></div>
     </div>
-    <p style="font-size:13.5px;color:var(--muted);margin:4px 0 0">Ham metin: <a href="/install.txt">/install.txt</a> · Claude’un izlediği adımlar: <a href="/install.md">/install.md</a> · Kurallar: <a href="/skill/runik/rules.md">rules.md</a> · Kurulum betiği: <a href="/install.sh">/install.sh</a></p>
+    <p style="font-size:13.5px;color:var(--muted);margin:4px 0 0">From a terminal: <code class="inline">curl -fsSL https://runik.littleman.workers.dev/install.sh | bash</code><br>Raw prompt: <a href="/install.txt">/install.txt</a> · Steps Claude follows: <a href="/install.md">/install.md</a> · Rules: <a href="/skill/runik/rules.md">rules.md</a> · Installer: <a href="/install.sh">/install.sh</a></p>
   </div>
 </section>
 
-<section id="surumler" aria-labelledby="surum-b">
-  <p class="eyebrow">Sürüm notları</p>
-  <h2 id="surum-b">Kurallar değiştikçe herkeste</h2>
+<section id="releases" aria-labelledby="releases-h">
+  <p class="eyebrow">Release notes</p>
+  <h2 id="releases-h">What changed</h2>
   <ul class="notes">
-{{notlar}}
+{{notes}}
   </ul>
 </section>
 
-<footer><span>Runik __SURUM__</span><a href="https://github.com/littlepilot/runik">GitHub</a><a href="/skill/runik/version.json">version.json</a></footer>
+<footer><span>Runik __VERSION__</span><a href="https://github.com/littlepilot/runik">GitHub</a><a href="/skill/runik/version.json">version.json</a></footer>
 </div>
 <script>
-document.getElementById('kopyala').addEventListener('click',async e=>{const b=e.currentTarget,t=document.getElementById('prompt').textContent;try{await navigator.clipboard.writeText(t)}catch{const r=document.createRange();r.selectNodeContents(document.getElementById('prompt'));const s=getSelection();s.removeAllRanges();s.addRange(r);document.execCommand('copy')}b.textContent='Kopyalandı ✓';setTimeout(()=>b.textContent='Kopyala',1800)});
+document.getElementById('copy').addEventListener('click',async e=>{const b=e.currentTarget,t=document.getElementById('prompt').textContent;try{await navigator.clipboard.writeText(t)}catch{const r=document.createRange();r.selectNodeContents(document.getElementById('prompt'));const s=getSelection();s.removeAllRanges();s.addRange(r);document.execCommand('copy')}b.textContent='Copied ✓';setTimeout(()=>b.textContent='Copy',1800)});
 </script>
 </body>
 </html>

@@ -4,10 +4,10 @@
   "description": "Visual answer language for Claude Code: landing page, installer and the global runik skill",
   "scripts": {
     "install-skill": "bash public/install.sh",
-    "sayfa": "python3 scripts/cizimler.py && python3 scripts/sayfa.py",
-    "kontrol": "node scripts/kontrol.mjs",
-    "yerel": "wrangler dev",
-    "yayinla": "wrangler deploy"
+    "page": "python3 scripts/drawings.py && python3 scripts/page.py",
+    "check": "node scripts/check.mjs",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
   },
   "devDependencies": {
     "html-validate": "8.24.1",
